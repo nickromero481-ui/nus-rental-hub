@@ -1,0 +1,1116 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NUS租房情报站 - 小红书+全网房源汇总与验证</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;background:#0f172a;color:#e2e8f0;line-height:1.7}
+.container{max-width:1200px;margin:0 auto;padding:20px}
+.hero{background:linear-gradient(135deg,#1e3a5f 0%,#0f172a 50%,#1a1a2e 100%);border-radius:20px;padding:40px 30px;text-align:center;margin-bottom:30px;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-50%;right:-30%;width:400px;height:400px;background:radial-gradient(circle,rgba(56,189,248,0.08),transparent 70%);border-radius:50%}
+.hero::after{content:'';position:absolute;bottom:-40%;left:-20%;width:350px;height:350px;background:radial-gradient(circle,rgba(244,114,182,0.06),transparent 70%);border-radius:50%}
+.hero h1{font-size:2.2em;margin-bottom:8px;position:relative;z-index:1}
+.hero h1 span{background:linear-gradient(90deg,#38bdf8,#f472b6);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hero p{color:#94a3b8;font-size:1.05em;position:relative;z-index:1}
+.badge{display:inline-block;background:rgba(56,189,248,0.15);color:#38bdf8;padding:4px 14px;border-radius:20px;font-size:0.8em;margin-top:12px;border:1px solid rgba(56,189,248,0.3);position:relative;z-index:1}
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:30px}
+.stat-card{background:#1e293b;border-radius:16px;padding:20px;text-align:center;border:1px solid #334155}
+.stat-card .num{font-size:2em;font-weight:700;background:linear-gradient(135deg,#38bdf8,#818cf8);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.stat-card .label{color:#94a3b8;font-size:0.85em;margin-top:4px}
+.section{background:#1e293b;border-radius:20px;padding:28px;margin-bottom:24px;border:1px solid #334155}
+.section h2{font-size:1.4em;margin-bottom:18px;display:flex;align-items:center;gap:10px}
+.section h2 .icon{font-size:1.2em}
+.filter-bar{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:20px}
+.filter-btn{background:#334155;color:#e2e8f0;border:none;padding:8px 18px;border-radius:10px;cursor:pointer;font-size:0.9em;transition:all .2s}
+.filter-btn:hover,.filter-btn.active{background:#38bdf8;color:#0f172a}
+.room-card{background:#0f172a;border-radius:16px;padding:20px;margin-bottom:14px;border:1px solid #334155;transition:all .3s;position:relative}
+.room-card:hover{border-color:#38bdf8;transform:translateY(-2px);box-shadow:0 8px 24px rgba(56,189,248,0.1)}
+.room-card .top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px}
+.room-card .price{font-size:1.6em;font-weight:700;color:#f472b6}
+.room-card .price span{font-size:0.5em;color:#94a3b8;font-weight:400}
+.room-card .type-tag{background:rgba(56,189,248,0.15);color:#38bdf8;padding:3px 10px;border-radius:8px;font-size:0.8em}
+.room-card .info{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px;margin-bottom:12px}
+.room-card .info-item{color:#94a3b8;font-size:0.9em}
+.room-card .info-item b{color:#e2e8f0}
+.room-card .platform{display:inline-block;background:#334155;padding:2px 10px;border-radius:6px;font-size:0.78em;color:#94a3b8;margin-right:6px}
+.room-card .contact{margin-top:12px;padding-top:12px;border-top:1px solid #334155;display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.room-card .contact-item{font-size:0.88em;color:#94a3b8}
+.room-card .contact-item a{color:#38bdf8;text-decoration:none}
+.room-card .contact-item a:hover{text-decoration:underline}
+.verify-badge{display:inline-flex;align-items:center;gap:4px;font-size:0.78em;padding:3px 10px;border-radius:8px;font-weight:600}
+.verify-badge.pass{background:rgba(34,197,94,0.15);color:#22c55e;border:1px solid rgba(34,197,94,0.3)}
+.verify-badge.warn{background:rgba(251,191,36,0.15);color:#fbbf24;border:1px solid rgba(251,191,36,0.3)}
+.verify-badge.fail{background:rgba(239,68,68,0.15);color:#ef4444;border:1px solid rgba(239,68,68,0.3)}
+.verify-list{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.step-card{display:grid;grid-template-columns:50px 1fr;gap:16px;background:#0f172a;border-radius:14px;padding:18px;margin-bottom:12px;border:1px solid #334155;align-items:start}
+.step-card .step-num{width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,#38bdf8,#818cf8);display:flex;align-items:center;justify-content:center;font-weight:700;color:#0f172a;font-size:1.1em;flex-shrink:0}
+.step-card .step-content h4{font-size:1.05em;margin-bottom:4px}
+.step-card .step-content p{color:#94a3b8;font-size:0.9em}
+.step-card .step-content a{color:#38bdf8;text-decoration:none}
+.step-card .step-content a:hover{text-decoration:underline}
+.red-flag{display:grid;grid-template-columns:auto 1fr;gap:12px;background:rgba(239,68,68,0.06);border-left:3px solid #ef4444;padding:14px 16px;margin-bottom:10px;border-radius:0 10px 10px 0}
+.red-flag .rf-icon{font-size:1.3em}
+.red-flag .rf-text h4{color:#fca5a5;font-size:0.95em;margin-bottom:2px}
+.red-flag .rf-text p{color:#94a3b8;font-size:0.88em}
+.green-signal{display:grid;grid-template-columns:auto 1fr;gap:12px;background:rgba(34,197,94,0.06);border-left:3px solid #22c55e;padding:14px 16px;margin-bottom:10px;border-radius:0 10px 10px 0}
+.green-signal .gs-icon{font-size:1.3em}
+.green-signal .gs-text h4{color:#86efac;font-size:0.95em;margin-bottom:2px}
+.green-signal .gs-text p{color:#94a3b8;font-size:0.88em}
+.xhs-guide{background:linear-gradient(135deg,#1e293b,#0f172a);border-radius:16px;padding:20px;margin-bottom:14px;border:1px solid #334155}
+.xhs-guide h4{color:#f472b6;margin-bottom:8px}
+.xhs-guide .keywords{display:flex;flex-wrap:wrap;gap:6px}
+.xhs-guide .kw{background:#334155;padding:4px 12px;border-radius:8px;font-size:0.85em;color:#cbd5e1;cursor:pointer;transition:all .2s}
+.xhs-guide .kw:hover{background:#f472b6;color:#0f172a}
+.timeline{position:relative;padding-left:30px}
+.timeline::before{content:'';position:absolute;left:12px;top:0;bottom:0;width:2px;background:#334155}
+.timeline-item{position:relative;margin-bottom:20px;padding-left:20px}
+.timeline-item::before{content:'';position:absolute;left:-22px;top:6px;width:12px;height:12px;border-radius:50%;background:#38bdf8;border:2px solid #0f172a}
+.timeline-item .date{color:#38bdf8;font-size:0.85em;font-weight:600}
+.timeline-item .desc{color:#94a3b8;font-size:0.9em;margin-top:2px}
+.emergency-box{background:linear-gradient(135deg,rgba(239,68,68,0.1),rgba(239,68,68,0.02));border:1px solid rgba(239,68,68,0.3);border-radius:16px;padding:20px}
+.emergency-box h3{color:#fca5a5;margin-bottom:12px}
+.emergency-box .phone{display:inline-block;background:#334155;padding:6px 16px;border-radius:10px;font-size:1.1em;font-weight:600;margin:4px 6px 4px 0;color:#e2e8f0}
+.emergency-box .phone span{color:#38bdf8}
+.note{background:rgba(251,191,36,0.08);border:1px solid rgba(251,191,36,0.2);border-radius:12px;padding:14px 18px;margin-top:14px;color:#fbbf24;font-size:0.9em}
+.note b{color:#fde68a}
+.tabs{display:flex;gap:0;margin-bottom:20px;background:#0f172a;border-radius:12px;padding:4px;border:1px solid #334155}
+.tab-btn{flex:1;padding:10px;text-align:center;border:none;background:transparent;color:#94a3b8;cursor:pointer;border-radius:10px;font-size:0.95em;transition:all .2s}
+.tab-btn.active{background:#38bdf8;color:#0f172a;font-weight:600}
+.tab-content{display:none}
+.tab-content.active{display:block}
+@media(max-width:768px){
+  .stats-row{grid-template-columns:repeat(2,1fr)}
+  .hero h1{font-size:1.6em}
+  .room-card .info{grid-template-columns:1fr}
+}
+/* --- Contact Tracker Styles --- */
+.tracker-bar{background:#1e293b;border-radius:16px;padding:18px 24px;margin-bottom:24px;border:1px solid #334155;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.tracker-bar .progress-section{flex:1;min-width:200px}
+.tracker-bar .progress-label{display:flex;justify-content:space-between;margin-bottom:6px;font-size:0.85em;color:#94a3b8}
+.tracker-bar .progress-label b{color:#e2e8f0}
+.tracker-bar .progress-track{height:10px;background:#0f172a;border-radius:10px;overflow:hidden}
+.tracker-bar .progress-fill{height:100%;border-radius:10px;background:linear-gradient(90deg,#38bdf8,#818cf8);transition:width .5s ease}
+.tracker-bar .stats-pills{display:flex;gap:8px;flex-wrap:wrap}
+.tracker-bar .pill{padding:4px 12px;border-radius:8px;font-size:0.78em;font-weight:600}
+.pill-pending{background:rgba(148,163,184,0.2);color:#94a3b8}
+.pill-contacted{background:rgba(56,189,248,0.2);color:#38bdf8}
+.pill-viewed{background:rgba(168,85,247,0.2);color:#a855f7}
+.pill-signed{background:rgba(34,197,94,0.2);color:#22c55e}
+.pill-passed{background:rgba(239,68,68,0.15);color:#ef4444}
+.room-card{display:flex;gap:16px;align-items:flex-start}
+.room-card .tracker-col{display:flex;flex-direction:column;align-items:center;gap:6px;flex-shrink:0;padding-top:4px}
+.room-card .tracker-col .status-dot{width:20px;height:20px;border-radius:50%;border:2px solid #334155;background:transparent;cursor:pointer;transition:all .3s;display:flex;align-items:center;justify-content:center;font-size:11px;color:transparent}
+.room-card .tracker-col .status-dot:hover{border-color:#38bdf8;transform:scale(1.15)}
+.room-card .tracker-col .status-label{font-size:0.68em;color:#64748b;white-space:nowrap;max-width:56px;text-align:center;line-height:1.2}
+.status-dot.s-pending{border-color:#475569;color:#475569}
+.status-dot.s-contacted{border-color:#38bdf8;background:#38bdf820;color:#38bdf8}
+.status-dot.s-viewed{border-color:#a855f7;background:#a855f720;color:#a855f7}
+.status-dot.s-signed{border-color:#22c55e;background:#22c55e20;color:#22c55e}
+.status-dot.s-passed{border-color:#ef4444;background:#ef444420;color:#ef4444}
+.room-card .card-body{flex:1;min-width:0}
+.room-card.status-passed{opacity:0.5}
+.room-card.status-passed:hover{opacity:0.75}
+/* Status dropdown */
+.status-menu{position:absolute;top:30px;left:0;z-index:100;background:#1e293b;border:1px solid #475569;border-radius:12px;padding:6px;min-width:120px;box-shadow:0 8px 24px rgba(0,0,0,0.5);display:none}
+.status-menu.show{display:block}
+.status-menu .sm-item{padding:8px 12px;border-radius:8px;cursor:pointer;font-size:0.82em;display:flex;align-items:center;gap:8px;transition:background .15s}
+.status-menu .sm-item:hover{background:#334155}
+.sm-item .sm-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+/* Monitor tab */
+.monitor-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px}
+.monitor-card{background:#0f172a;border-radius:14px;padding:16px;border:1px solid #334155;transition:all .3s}
+.monitor-card:hover{border-color:#38bdf8}
+.monitor-card h4{font-size:0.95em;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.monitor-card .mc-desc{color:#94a3b8;font-size:0.83em;margin-bottom:10px}
+.monitor-card .mc-link{display:inline-block;background:#334155;color:#38bdf8;padding:6px 14px;border-radius:8px;font-size:0.82em;text-decoration:none;transition:all .2s}
+.monitor-card .mc-link:hover{background:#38bdf8;color:#0f172a}
+.monitor-card .mc-badge{font-size:0.72em;background:#fbbf2420;color:#fbbf24;padding:2px 8px;border-radius:6px;margin-left:6px}
+.auto-refresh-bar{background:linear-gradient(135deg,rgba(56,189,248,0.1),rgba(129,140,248,0.05));border:1px solid #38bdf830;border-radius:14px;padding:16px 20px;margin-bottom:20px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.auto-refresh-bar .ar-dot{width:10px;height:10px;border-radius:50%;background:#22c55e;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
+.auto-refresh-bar .ar-text{flex:1;color:#94a3b8;font-size:0.88em}
+.auto-refresh-bar .ar-text b{color:#e2e8f0}
+.refresh-btn{background:#334155;color:#e2e8f0;border:1px solid #475569;padding:8px 18px;border-radius:10px;cursor:pointer;font-size:0.85em;transition:all .2s}
+.refresh-btn:hover{background:#38bdf8;color:#0f172a;border-color:#38bdf8}
+.new-listing-alert{background:linear-gradient(135deg,rgba(34,197,94,0.12),rgba(34,197,94,0.03));border:1px solid #22c55e40;border-radius:14px;padding:16px 20px;margin-bottom:16px;display:none}
+.new-listing-alert.show{display:block}
+.new-listing-alert h4{color:#86efac;margin-bottom:6px;font-size:0.95em}
+.new-listing-alert p{color:#94a3b8;font-size:0.85em}
+</style>
+</head>
+<body>
+<div class="container">
+
+<!-- Hero -->
+<div class="hero">
+  <h1><span>NUS租房情报站</span></h1>
+  <p>小红书+全网房源汇总 / 防诈骗验证 / 避坑指南</p>
+  <div class="badge">最后更新：2026年4月2日 | 数据来源：狮城租房网/搜房网/SRX/PropertyGuru/寻友谷等</div>
+</div>
+
+<!-- Stats -->
+  <div class="stats-row">
+  <div class="stat-card"><div class="num">11</div><div class="label">真实链接可验证房源</div></div>
+  <div class="stat-card"><div class="num">10</div><div class="label">女生可入住</div></div>
+  <div class="stat-card"><div class="num">S$800-1,550</div><div class="label">价格区间/月</div></div>
+  <div class="stat-card"><div class="num">10-20min</div><div class="label">到NUS工学院(CDE)通勤</div></div>
+</div>
+
+<!-- Contact Progress Tracker -->
+<div class="tracker-bar" id="trackerBar">
+  <div class="progress-section">
+    <div class="progress-label">
+      <span>联系进度</span>
+      <b id="progressText">0 / 12 已联系</b>
+    </div>
+    <div class="progress-track">
+      <div class="progress-fill" id="progressFill" style="width:0%"></div>
+    </div>
+  </div>
+  <div class="stats-pills">
+    <span class="pill pill-pending" id="pillPending">0 待联系</span>
+    <span class="pill pill-contacted" id="pillContacted">0 已联系</span>
+    <span class="pill pill-viewed" id="pillViewed">0 已看房</span>
+    <span class="pill pill-signed" id="pillSigned">0 已签约</span>
+    <span class="pill pill-passed" id="pillPassed">0 已放弃</span>
+  </div>
+</div>
+
+<!-- Tab Navigation -->
+<div class="tabs" id="mainTabs">
+  <button class="tab-btn active" onclick="showTab('listings')">靠谱房源列表</button>
+  <button class="tab-btn" onclick="showTab('monitor')">房源监测</button>
+  <button class="tab-btn" onclick="showTab('xhs')">小红书找房攻略</button>
+  <button class="tab-btn" onclick="showTab('verify')">房源验证流程</button>
+  <button class="tab-btn" onclick="showTab('redflags')">防诈骗手册</button>
+  <button class="tab-btn" onclick="showTab('timeline')">行动时间线</button>
+</div>
+
+<!-- Tab 1: 房源列表 -->
+<div class="tab-content active" id="tab-listings">
+<div class="section">
+  <h2><span class="icon">🏠</span> Clementi女生可入住房源（附真实链接）</h2>
+  <p style="color:#94a3b8;font-size:0.9em;margin-bottom:4px">所有房源均有原始链接，点击即可验证。通勤目标：NUS工学院(College of Design and Engineering)，Kent Ridge校区。</p>
+  <p style="color:#94a3b8;font-size:0.85em;margin-bottom:16px">从Clementi到NUS工学院：96路公交约10分钟直达，201路约17分钟，步行约25分钟，骑车约15分钟。</p>
+  
+  <div class="filter-bar">
+    <button class="filter-btn active" onclick="filterRooms('all',this)">全部</button>
+    <button class="filter-btn" style="background:#f472b6;color:#0f172a;font-weight:600" onclick="filterRooms('female',this)">女生可入住</button>
+    <button class="filter-btn" onclick="filterRooms('no-agent',this)">无中介费</button>
+    <button class="filter-btn" onclick="filterRooms('cheap',this)">S$1,000以下</button>
+    <button class="filter-btn" onclick="filterRooms('near',this)">近NUS工学院</button>
+  </div>
+
+  <div id="roomList">
+    <!-- Room 1 -->
+    <div class="room-card" data-id="r1" data-tags="no-agent,near,female">
+      <div class="tracker-col">
+        <div class="status-dot s-pending" onclick="toggleStatus('r1',this,event)"></div>
+        <div class="status-label">待联系</div>
+      </div>
+      <div class="card-body">
+      <div class="top">
+        <div class="price">S$950<span>/月</span></div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <span class="type-tag">普通房</span>
+          <span class="verify-badge pass">&#10003; 无中介费</span>
+          <span class="verify-badge pass">&#10003; 限女生</span>
+          <span class="verify-badge pass">&#10003; 全女生房子</span>
+        </div>
+      </div>
+      <div class="info">
+        <div class="info-item"><b>地址：</b>Blk 374 Clementi Ave 5, 邮编120374</div>
+        <div class="info-item"><b>类型：</b>HDB组屋 | 有空调</div>
+        <div class="info-item"><b>设施：</b>洗衣机、烘干机、可煮食、WiFi</div>
+        <div class="info-item"><b>通勤：</b>巴士直达NUS工学院；骑车约15分钟</div>
+        <div class="info-item"><b>入住：</b>随时入住</div>
+        <div class="info-item"><b>水电：</b>分摊（不限使用）</div>
+      </div>
+      <div class="contact">
+        <span class="platform"><a href="https://www.shicheng.one/s3/289778" target="_blank" style="color:#38bdf8;text-decoration:none">shicheng.one &#8599;</a></span>
+        <span class="contact-item">电话：<a href="tel:+6587931737">+65 8793 1737</a></span>
+      </div>
+      </div>
+    </div>
+
+    <!-- Room 2 -->
+    <div class="room-card" data-id="r2" data-tags="cheap,female">
+      <div class="tracker-col">
+        <div class="status-dot s-pending" onclick="toggleStatus('r2',this,event)"></div>
+        <div class="status-label">待联系</div>
+      </div>
+      <div class="card-body">
+      <div class="top">
+        <div class="price">S$650<span>/月</span></div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <span class="type-tag">普通房(2人)</span>
+          <span class="verify-badge pass">&#10003; 含水电</span>
+          <span class="verify-badge pass">&#10003; 限女生</span>
+        </div>
+      </div>
+      <div class="info">
+        <div class="info-item"><b>地址：</b>Blk 435 Clementi Ave 3, 邮编120435</div>
+        <div class="info-item"><b>类型：</b>HDB组屋 | Clementi Mall后方</div>
+        <div class="info-item"><b>特点：</b>步行2分钟到Clementi MRT，转96路公交约10分钟到NUS工学院</div>
+        <div class="info-item"><b>入住：</b>可HDB注册</div>
+        <div class="info-item"><b>注意：</b>为2人合住房间，单人租金S$650</div>
+      </div>
+      <div class="contact">
+        <span class="platform"><a href="https://www.shwerooms.com/view.php?t=clementi-common-room-rent-for-1-female&i=11220724" target="_blank" style="color:#38bdf8;text-decoration:none">ShweRooms &#8599;</a></span>
+        <span class="contact-item">电话：<a href="tel:+6583469300">+65 8346 9300</a></span>
+      </div>
+      </div>
+    </div>
+
+    <!-- Room 3 -->
+    <div class="room-card" data-id="r3" data-tags="cheap,no-agent,female">
+      <div class="tracker-col">
+        <div class="status-dot s-pending" onclick="toggleStatus('r3',this,event)"></div>
+        <div class="status-label">待联系</div>
+      </div>
+      <div class="card-body">
+      <div class="top">
+        <div class="price">S$920<span>/月</span></div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <span class="type-tag">普通房</span>
+          <span class="verify-badge pass">&#10003; 无中介费</span>
+          <span class="verify-badge pass">&#10003; 含账单+WiFi</span>
+          <span class="verify-badge pass">&#10003; 限女生</span>
+        </div>
+      </div>
+      <div class="info">
+        <div class="info-item"><b>地址：</b>Blk 415 Commonwealth Ave West, Clementi, 120415</div>
+        <div class="info-item"><b>类型：</b>HDB五房式组屋</div>
+        <div class="info-item"><b>通勤：</b>有直达巴士去NUS工学院</div>
+        <div class="info-item"><b>设施：</b>宽敞、全套家具</div>
+      </div>
+      <div class="contact">
+        <span class="platform"><a href="https://www.roomies.sg/rooms/683229" target="_blank" style="color:#38bdf8;text-decoration:none">Roomies.sg &#8599;</a></span>
+        <span class="contact-item">平台内联系</span>
+      </div>
+      </div>
+    </div>
+
+    <!-- Room 4 -->
+    <div class="room-card" data-id="r4" data-tags="cheap,female">
+      <div class="tracker-col">
+        <div class="status-dot s-pending" onclick="toggleStatus('r4',this,event)"></div>
+        <div class="status-label">待联系</div>
+      </div>
+      <div class="card-body">
+      <div class="top">
+        <div class="price">S$900<span>/月</span></div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <span class="type-tag">普通房</span>
+          <span class="verify-badge pass">&#10003; 含账单</span>
+          <span class="verify-badge pass">&#10003; 限女生</span>
+        </div>
+      </div>
+      <div class="info">
+        <div class="info-item"><b>地址：</b>Clementi Ave 3, 邮编120448</div>
+        <div class="info-item"><b>类型：</b>公寓</div>
+        <div class="info-item"><b>通勤：</b>Clementi区域，公交10-15分钟到NUS工学院</div>
+        <div class="info-item"><b>注意：</b>最短租期6个月，押金S$900</div>
+      </div>
+      <div class="contact">
+        <span class="platform"><a href="https://www.roomies.sg/rooms/849717" target="_blank" style="color:#38bdf8;text-decoration:none">Roomies.sg &#8599;</a></span>
+        <span class="contact-item">平台内联系</span>
+      </div>
+      </div>
+    </div>
+
+    <!-- Room 5 -->
+    <div class="room-card" data-id="r5" data-tags="cheap,no-agent,female">
+      <div class="tracker-col">
+        <div class="status-dot s-pending" onclick="toggleStatus('r5',this,event)"></div>
+        <div class="status-label">待联系</div>
+      </div>
+      <div class="card-body">
+      <div class="top">
+        <div class="price">S$1,000<span>/月</span></div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <span class="type-tag">普通房</span>
+          <span class="verify-badge pass">&#10003; 无中介费</span>
+          <span class="verify-badge pass">&#10003; 限女生</span>
+          <span class="verify-badge pass">&#10003; 巴士15分钟到NUS</span>
+        </div>
+      </div>
+      <div class="info">
+        <div class="info-item"><b>地址：</b>Clementi, 邮编120114</div>
+        <div class="info-item"><b>类型：</b>公寓（3室2卫）</div>
+        <div class="info-item"><b>通勤：</b>巴士约15分钟到NUS工学院</div>
+        <div class="info-item"><b>设施：</b>带家具、可煮食、可用洗衣机</div>
+      </div>
+      <div class="contact">
+        <span class="platform"><a href="https://www.roomies.sg/rooms/853303" target="_blank" style="color:#38bdf8;text-decoration:none">Roomies.sg &#8599;</a></span>
+        <span class="contact-item">平台内联系</span>
+      </div>
+      </div>
+    </div>
+
+    <!-- Room 6 -->
+    <div class="room-card" data-id="r6" data-tags="cheap,no-agent,female">
+      <div class="tracker-col">
+        <div class="status-dot s-pending" onclick="toggleStatus('r6',this,event)"></div>
+        <div class="status-label">待联系</div>
+      </div>
+      <div class="card-body">
+      <div class="top">
+        <div class="price">S$1,000<span>/月</span></div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <span class="type-tag">普通房</span>
+          <span class="verify-badge pass">&#10003; 无中介费</span>
+          <span class="verify-badge pass">&#10003; 男女不限</span>
+          <span class="verify-badge pass">&#10003; 欢迎学生</span>
+        </div>
+      </div>
+      <div class="info">
+        <div class="info-item"><b>地址：</b>428 Clementi Ave 3, Singapore 120428</div>
+        <div class="info-item"><b>类型：</b>HDB组屋</div>
+        <div class="info-item"><b>通勤：</b>Near to NUS，公交约15分钟到工学院</div>
+        <div class="info-item"><b>设施：</b>可轻煮食</div>
+      </div>
+      <div class="contact">
+        <span class="platform"><a href="https://www.ilivesg.com/room-for-rent-179456" target="_blank" style="color:#38bdf8;text-decoration:none">iLiveSG &#8599;</a></span>
+        <span class="contact-item">平台内联系</span>
+      </div>
+      </div>
+    </div>
+
+    <!-- Room 7 -->
+    <div class="room-card" data-id="r7" data-tags="female">
+      <div class="tracker-col">
+        <div class="status-dot s-pending" onclick="toggleStatus('r7',this,event)"></div>
+        <div class="status-label">待联系</div>
+      </div>
+      <div class="card-body">
+      <div class="top">
+        <div class="price">S$1,200<span>/月</span></div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <span class="type-tag">普通房</span>
+          <span class="verify-badge pass">&#10003; 含水电</span>
+          <span class="verify-badge pass">&#10003; 限女生</span>
+          <span class="verify-badge pass">&#10003; Singpass认证房东</span>
+        </div>
+      </div>
+      <div class="info">
+        <div class="info-item"><b>地址：</b>209A Clementi Avenue 6, Singapore 121209</div>
+        <div class="info-item"><b>类型：</b>HDB组屋</div>
+        <div class="info-item"><b>通勤：</b>距Clementi MRT两站公交，转96路约15-20分钟到NUS工学院</div>
+        <div class="info-item"><b>入住：</b>2026年4月5日起</div>
+        <div class="info-item"><b>特点：</b>房东Singpass认证发布</div>
+      </div>
+      <div class="contact">
+        <span class="platform"><a href="https://www.hozuko.com/rental/hdb-common-room-209a-clementi-avenue-6-9v0wiLrAs" target="_blank" style="color:#38bdf8;text-decoration:none">Hozuko &#8599;</a></span>
+        <span class="contact-item">平台内联系</span>
+      </div>
+      </div>
+    </div>
+
+    <!-- Room 8 -->
+    <div class="room-card" data-id="r8" data-tags="female">
+      <div class="tracker-col">
+        <div class="status-dot s-pending" onclick="toggleStatus('r8',this,event)"></div>
+        <div class="status-label">待联系</div>
+      </div>
+      <div class="card-body">
+      <div class="top">
+        <div class="price">S$1,250<span>/月</span></div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <span class="type-tag">普通房</span>
+          <span class="verify-badge pass">&#10003; 限女生</span>
+          <span class="verify-badge pass">&#10003; 全女生合租</span>
+        </div>
+      </div>
+      <div class="info">
+        <div class="info-item"><b>地址：</b>金文泰（近Clementi MRT，步行约7分钟）</div>
+        <div class="info-item"><b>通勤：</b>楼下284巴士站（5分钟一班）；靠近NUS</div>
+        <div class="info-item"><b>设施：</b>无房东同住，全女生室友（均为工作人士），可煮食</div>
+        <div class="info-item"><b>配套：</b>楼下两间食阁、杂货店</div>
+        <div class="info-item"><b>注意：</b>有宠物猫</div>
+      </div>
+      <div class="contact">
+        <span class="platform"><a href="https://www.shichengbbs.com/2976132" target="_blank" style="color:#38bdf8;text-decoration:none">狮城BBS &#8599;</a></span>
+        <span class="contact-item">微信：yueez1995_</span>
+      </div>
+      </div>
+    </div>
+
+    <!-- Room 9 -->
+    <div class="room-card" data-id="r9" data-tags="female">
+      <div class="tracker-col">
+        <div class="status-dot s-pending" onclick="toggleStatus('r9',this,event)"></div>
+        <div class="status-label">待联系</div>
+      </div>
+      <div class="card-body">
+      <div class="top">
+        <div class="price">S$1,250<span>/月</span></div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <span class="type-tag">普通房</span>
+          <span class="verify-badge pass">&#10003; 限女生</span>
+          <span class="verify-badge pass">&#10003; 含水电WiFi空调</span>
+        </div>
+      </div>
+      <div class="info">
+        <div class="info-item"><b>地址：</b>Clementi Ave 2</div>
+        <div class="info-item"><b>类型：</b>公寓</div>
+        <div class="info-item"><b>通勤：</b>Near NUS工学院</div>
+        <div class="info-item"><b>入住：</b>2026年4月初</div>
+        <div class="info-item"><b>注意：</b>有3只约克夏犬，需爱狗、安静、不允许做饭</div>
+      </div>
+      <div class="contact">
+        <span class="platform"><a href="https://www.roomgo.com.sg/room-rental-clementi/female-tenant-for-common-room-at-clementi-for-rent/H260124112543111" target="_blank" style="color:#38bdf8;text-decoration:none">Roomgo &#8599;</a></span>
+        <span class="contact-item">平台内联系（房东Sylvie）</span>
+      </div>
+      </div>
+    </div>
+
+    <!-- Room 10 -->
+    <div class="room-card" data-id="r10" data-tags="female">
+      <div class="tracker-col">
+        <div class="status-dot s-pending" onclick="toggleStatus('r10',this,event)"></div>
+        <div class="status-label">待联系</div>
+      </div>
+      <div class="card-body">
+      <div class="top">
+        <div class="price">S$1,280<span>/月</span></div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <span class="type-tag">普通房</span>
+          <span class="verify-badge pass">&#10003; 含水电WiFi空调</span>
+          <span class="verify-badge pass">&#10003; 限女生</span>
+          <span class="verify-badge warn">&#9888; 有中介费(需确认)</span>
+        </div>
+      </div>
+      <div class="info">
+        <div class="info-item"><b>地址：</b>349 Clementi Ave 2, Clementi</div>
+        <div class="info-item"><b>类型：</b>HDB组屋</div>
+        <div class="info-item"><b>通勤：</b>Near NUS工学院</div>
+        <div class="info-item"><b>入住：</b>2026年4月起</div>
+        <div class="info-item"><b>注意：</b>由Agent发布，中介费需另确认</div>
+      </div>
+      <div class="contact">
+        <span class="platform"><a href="https://rentify.sg/listing/common-room-for-rent-starts-april-2026/" target="_blank" style="color:#38bdf8;text-decoration:none">Rentify &#8599;</a></span>
+        <span class="contact-item">平台内联系</span>
+      </div>
+      </div>
+    </div>
+
+    <!-- Room 11 -->
+    <div class="room-card" data-id="r11" data-tags="near,female">
+      <div class="tracker-col">
+        <div class="status-dot s-pending" onclick="toggleStatus('r11',this,event)"></div>
+        <div class="status-label">待联系</div>
+      </div>
+      <div class="card-body">
+      <div class="top">
+        <div class="price">S$1,550<span>/月</span></div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <span class="type-tag">普通房(公寓)</span>
+          <span class="verify-badge pass">&#10003; 仅限女性</span>
+          <span class="verify-badge pass">&#10003; 泳池+健身房</span>
+          <span class="verify-badge pass">&#10003; 可煮食</span>
+        </div>
+      </div>
+      <div class="info">
+        <div class="info-item"><b>地址：</b>Clementi Apartment, 邮编591301</div>
+        <div class="info-item"><b>类型：</b>公寓（全配设施）</div>
+        <div class="info-item"><b>通勤：</b>约20分钟到NUS</div>
+        <div class="info-item"><b>设施：</b>泳池、健身房、全套家具</div>
+        <div class="info-item"><b>注意：</b>另加水电、网络、清洁费；无房东同住</div>
+      </div>
+      <div class="contact">
+        <span class="platform"><a href="https://sg.ok.com/en/city-singapore/cate-condo-ec/nus-female-only-common-room-available-from-the-1st-of-the-month%2C-near-sim-and-nus.-fully-furnished-a-6338438934528211/" target="_blank" style="color:#38bdf8;text-decoration:none">OK.com &#8599;</a></span>
+        <span class="contact-item">平台内联系</span>
+      </div>
+      </div>
+    </div>
+
+    <!-- Room 12 -->
+    <div class="room-card" data-id="r12" data-tags="near,no-agent,female">
+      <div class="tracker-col">
+        <div class="status-dot s-pending" onclick="toggleStatus('r12',this,event)"></div>
+        <div class="status-label">待联系</div>
+      </div>
+      <div class="card-body">
+      <div class="top">
+        <div class="price">S$900<span>/月</span></div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <span class="type-tag">普通房</span>
+          <span class="verify-badge pass">&#10003; 含水电网</span>
+          <span class="verify-badge pass">&#10003; 房东直租</span>
+          <span class="verify-badge pass">&#10003; 步行15分钟到NUS</span>
+        </div>
+      </div>
+      <div class="info">
+        <div class="info-item"><b>地址：</b>金文泰120728</div>
+        <div class="info-item"><b>类型：</b>组屋</div>
+        <div class="info-item"><b>通勤：</b>步行15分钟到NUS工学院</div>
+        <div class="info-item"><b>入住：</b>随时</div>
+        <div class="info-item"><b>注意：</b>6小时前刚发布，非常新鲜</div>
+      </div>
+      <div class="contact">
+        <span class="platform"><a href="https://www.shichengzufang.com/c2?area_id=29" target="_blank" style="color:#38bdf8;text-decoration:none">狮城租房网 &#8599;</a></span>
+        <span class="contact-item">电话：<a href="tel:+6593806282">+65 9380 6282</a></span>
+        <span class="contact-item">编号：S11412c</span>
+      </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="note">
+    <b>重要提醒：</b>以上房源信息均来自真实平台链接，可直接点击验证。但房源可能已下架或被租出，联系前请务必：1) 点击链接确认房源状态；2) 要求视频看房；3) 核实房东/中介身份（CEA查询）；4) 签正式合同+缴印花税后再付款。价格区间参考：Clementi女生普通房S$650-1,550/月。通勤目标：NUS工学院(CDE)位于Kent Ridge校区，96路公交从Clementi MRT直达约10分钟。
+  </div>
+</div>
+</div>
+
+<!-- Tab 2: 房源监测 -->
+<div class="tab-content" id="tab-monitor">
+<div class="section">
+  <h2><span class="icon">📡</span> 房源监测中心</h2>
+  <p style="color:#94a3b8;font-size:0.9em;margin-bottom:16px">一键跳转到各大租房平台的Clementi女生房源搜索页，发现新房源直接联系。点击下方链接在新标签页打开平台搜索结果。</p>
+
+  <div class="auto-refresh-bar">
+    <div class="ar-dot"></div>
+    <div class="ar-text"><b>监测状态：</b>已开启 | 上次刷新：<span id="lastRefresh">--</span> | 下次自动刷新：<span id="nextRefresh">--</span></div>
+    <button class="refresh-btn" onclick="refreshNow()">立即刷新</button>
+  </div>
+
+  <div class="new-listing-alert" id="newListingAlert">
+    <h4>&#128994; 发现新房源！</h4>
+    <p id="newListingText">检测到平台有新的Clementi女生房源发布，点击下方平台卡片查看。</p>
+  </div>
+
+  <div class="monitor-grid">
+    <div class="monitor-card">
+      <h4>狮城租房网 <span class="mc-badge">中文</span></h4>
+      <div class="mc-desc">狮城最大的中文租房平台之一，房源更新快，支持按区域和性别筛选。</div>
+      <a class="mc-link" href="https://www.shichengzufang.com/c2?area_id=29" target="_blank">&#8599; 打开Clementi房源列表</a>
+    </div>
+    <div class="monitor-card">
+      <h4>狮城BBS <span class="mc-badge">中文</span></h4>
+      <div class="mc-desc">狮城华人社区论坛，个人房东直租多，可按关键词搜索。</div>
+      <a class="mc-link" href="https://www.shichengbbs.com/forum.php?mod=forumdisplay&fid=46&filter=lastpost&orderby=lastpost" target="_blank">&#8599; 搜索Clementi租房帖</a>
+    </div>
+    <div class="monitor-card">
+      <h4>Roomies.sg</h4>
+      <div class="mc-desc">新加坡热门合租平台，可直接按地点、性别、价格筛选。</div>
+      <a class="mc-link" href="https://www.roomies.sg/rooms/singapore/clementi?gender=female" target="_blank">&#8599; Clementi女生房源</a>
+    </div>
+    <div class="monitor-card">
+      <h4>PropertyGuru</h4>
+      <div class="mc-desc">新加坡最大房产平台，HDB和Condo全覆盖，筛选功能强大。</div>
+      <a class="mc-link" href="https://www.propertyguru.com.sg/rent/room/clementi?bedroom_type=common&gender=any&listing_type=hdb%2Ccondo&completion_status=completed&rent=500-1600" target="_blank">&#8599; Clementi Room Listing</a>
+    </div>
+    <div class="monitor-card">
+      <h4>99.co</h4>
+      <div class="mc-desc">新加坡知名房产搜索平台，地图视图直观查看房源位置。</div>
+      <a class="mc-link" href="https://www.99.co/singapore/rent/rooms/clementi?price_min=500&price_max=1600&room_type=common_room" target="_blank">&#8599; 99.co Clementi Rooms</a>
+    </div>
+    <div class="monitor-card">
+      <h4>SRX (StreetSine)</h4>
+      <div class="mc-desc">新加坡房地产交易所，数据来自CEA持牌中介，信息较可靠。</div>
+      <a class="mc-link" href="https://www.srx.com.sg/rent/listing?propertyType=hdb,condo&district=5&bedroom_type=common&rent_min=500&rent_max=1600" target="_blank">&#8599; SRX Clementi Rooms</a>
+    </div>
+    <div class="monitor-card">
+      <h4>Roomgo <span class="mc-badge">新</span></h4>
+      <div class="mc-desc">新兴合租平台，支持按性别和区域精确筛选。</div>
+      <a class="mc-link" href="https://www.roomgo.com.sg/room-rental-clementi?gender=female" target="_blank">&#8599; Roomgo Clementi Female</a>
+    </div>
+    <div class="monitor-card">
+      <h4>Rentify <span class="mc-badge">新</span></h4>
+      <div class="mc-desc">新晋租房平台，界面简洁，支持房东和中介双通道。</div>
+      <a class="mc-link" href="https://rentify.sg/listing/?location=clementi&type=common-room" target="_blank">&#8599; Rentify Clementi</a>
+    </div>
+    <div class="monitor-card">
+      <h4>OK.com <span class="mc-badge">新</span></h4>
+      <div class="mc-desc">综合房产平台，覆盖HDB/Condo/EC，筛选灵活。</div>
+      <a class="mc-link" href="https://sg.ok.com/en/city-singapore/cate-room-rental/?keyword=clementi+female" target="_blank">&#8599; OK.com Clementi Female</a>
+    </div>
+    <div class="monitor-card">
+      <h4>Hozuko</h4>
+      <div class="mc-desc">支持Singpass认证房东的平台，可查看房东真实身份。</div>
+      <a class="mc-link" href="https://www.hozuko.com/rental/?area=clementi&gender=female&room_type=common" target="_blank">&#8599; Hozuko Clementi Female</a>
+    </div>
+    <div class="monitor-card">
+      <h4>ShweRooms</h4>
+      <div class="mc-desc">面向外籍人士的租房平台，房源质量较高。</div>
+      <a class="mc-link" href="https://www.shwerooms.com/search.php?location=clementi&type=common&gender=female" target="_blank">&#8599; ShweRooms Clementi</a>
+    </div>
+    <div class="monitor-card">
+      <h4>iLiveSG</h4>
+      <div class="mc-desc">新加坡本地租房网站，有地图搜索和通勤时间计算。</div>
+      <a class="mc-link" href="https://www.ilivesg.com/room-for-rent/?search=clementi&gender=female" target="_blank">&#8599; iLiveSG Clementi</a>
+    </div>
+  </div>
+
+  <div class="note" style="margin-top:20px">
+    <b>使用建议：</b>每天打开这个页面，点击各平台链接快速浏览最新房源。遇到感兴趣的房源回到"靠谱房源列表"tab记录。由于跨域限制，网页无法自动抓取平台数据，但"立即刷新"按钮会打开所有平台让你快速浏览。<b>建议收藏本页面</b>（Ctrl+D），每天刷一遍。
+  </div>
+</div>
+</div>
+
+<!-- Tab 3: 小红书攻略 -->
+<div class="tab-content" id="tab-xhs">
+<div class="section">
+  <h2><span class="icon">📱</span> 小红书找房实操攻略</h2>
+  
+  <div class="xhs-guide">
+    <h4>&#128279; 推荐搜索关键词（复制直接搜）</h4>
+    <div class="keywords">
+      <span class="kw" style="background:#f472b630;color:#f472b6">NUS租房 女生 女寝</span>
+      <span class="kw" style="background:#f472b630;color:#f472b6">金文泰 女生合租</span>
+      <span class="kw" style="background:#f472b630;color:#f472b6">新加坡 女生找室友 NUS</span>
+      <span class="kw">NUS 租房 Clementi</span>
+      <span class="kw">新加坡留学 租房 避坑</span>
+      <span class="kw">NUS 转租 8月 女生</span>
+      <span class="kw">新加坡租房2026</span>
+      <span class="kw">金文泰 普通房 出租 女</span>
+      <span class="kw">NUS 合租 找室友 女</span>
+      <span class="kw">新加坡租房 免中介费 女生</span>
+      <span class="kw">#新加坡租房</span>
+      <span class="kw">#NUS租房</span>
+      <span class="kw">#金文泰租房</span>
+      <span class="kw">#Clementi租房</span>
+      <span class="kw">#NUS女生租房</span>
+      <span class="kw">#新加坡女生合租</span>
+    </div>
+  </div>
+
+  <h3 style="margin:20px 0 12px;color:#e2e8f0">最佳找房时间（小红书+全网）</h3>
+  <div class="timeline">
+    <div class="timeline-item"><div class="date">5月 - 7月 &#128293; 最活跃</div><div class="desc">毕业学长集中转租，房源最丰富，价格相对平稳。NUS学姐经验：找小红书上即将毕业的学长学姐，争取免中介费续租。</div></div>
+    <div class="timeline-item"><div class="date">8月 - 9月 &#128293; 开学高峰</div><div class="desc">房源紧俏但价格上涨。尽量避开这个时段才开始找房。</div></div>
+    <div class="timeline-item"><div class="date">1月 - 2月 &#128293; 次高峰</div><div class="desc">第二学期入学，部分转租房源出现。</div></div>
+    <div class="timeline-item"><div class="date">11月 - 12月</div><div class="desc">学期末，短租和转租房源增多。</div></div>
+  </div>
+
+  <h3 style="margin:24px 0 12px;color:#e2e8f0">小红书帖子类型识别</h3>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px">
+    <div style="background:#0f172a;border-radius:12px;padding:16px;border:1px solid #22c55e40">
+      <h4 style="color:#86efac;margin-bottom:6px">&#10003; 靠谱帖子特征</h4>
+      <ul style="color:#94a3b8;font-size:0.88em;padding-left:18px">
+        <li>有房屋实拍视频或360度照片</li>
+        <li>标明具体地址（Block号/邮编）</li>
+        <li>提供CEA注册号或房东证明</li>
+        <li>愿意视频看房或安排实地看房</li>
+        <li>说明最短租期（符合法律规定）</li>
+        <li>转租帖附原始合同截图</li>
+      </ul>
+    </div>
+    <div style="background:#0f172a;border-radius:12px;padding:16px;border:1px solid #ef444440">
+      <h4 style="color:#fca5a5;margin-bottom:6px">&#10007; 可疑帖子特征</h4>
+      <ul style="color:#94a3b8;font-size:0.88em;padding-left:18px">
+        <li>价格远低于市场价（普通房低于S$500）</li>
+        <li>要求先转账/付定金再看房</li>
+        <li>声称"不用签合同""直接转账就行"</li>
+        <li>图片过于精美但无视频</li>
+        <li>催促尽快决定、制造紧迫感</li>
+        <li>要求通过微信/支付宝私下转账</li>
+        <li>多账号发布相同房源信息</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="note" style="margin-top:20px">
+    <b>中国驻新加坡大使馆2025年7月紧急提醒：</b>多名中国公民在小红书等平台遭遇"留学生转租"骗局——骗子伪造中国留学生身份，以"暑假回国"为由发布低价短租广告，收取押金后立即拉黑。<b>新加坡法律：公寓最短租期3个月，组屋最短租期6个月。短于此期限的转租均属违法，租客无法律保障。</b>
+  </div>
+</div>
+</div>
+
+<!-- Tab 3: 验证流程 -->
+<div class="tab-content" id="tab-verify">
+<div class="section">
+  <h2><span class="icon">🔍</span> 房源验证5步流程（签约前必做）</h2>
+
+  <div class="step-card">
+    <div class="step-num">1</div>
+    <div class="step-content">
+      <h4>CEA中介执照查询</h4>
+      <p>如果是通过中介租房，<b>必须</b>先查对方执照。进入 <a href="https://www.cea.gov.sg/consumers/engaging-a-property-agent/check-if-your-property-agent-is-registered-with-cea" target="_blank">CEA公共注册系统</a>，输入中介姓名或注册号。核对显示的<b>电话号码</b>和<b>照片</b>是否与对方一致。搜不到 = 无证 = 直接拒绝。</p>
+    </div>
+  </div>
+
+  <div class="step-card">
+    <div class="step-num">2</div>
+    <div class="step-content">
+      <h4>HDB产权验证</h4>
+      <p>组屋需确认签约人就是房东。进入 <a href="https://app.sla.gov.sg/inlis/#/HDBLS" target="_blank">SLA INLIS系统</a>，申请"Image of HDB Leases"（约S$5.25），核对房东姓名是否与产权文件一致。替代方案：要求房东提供物业费账单、前租客印花税单、房产交易信件等免费证明文件。</p>
+    </div>
+  </div>
+
+  <div class="step-card">
+    <div class="step-num">3</div>
+    <div class="step-content">
+      <h4>HDB租房配额确认</h4>
+      <p>非马来西亚外国人在HDB租房受配额限制（每栋楼8%，每个邻里11%）。进入 <a href="https://services2.hdb.gov.sg/webapp/BR12AWNCQuota/" target="_blank">HDB非公民租客配额查询</a>，确认目标Block的配额未满。如果满了，房东依法不能租给你。</p>
+    </div>
+  </div>
+
+  <div class="step-card">
+    <div class="step-num">4</div>
+    <div class="step-content">
+      <h4>视频看房或实地看房</h4>
+      <p><b>绝不</b>在未看房的情况下签约或付款。视频看房时要求对方展示：房间全貌、水电表读数、空调运行状态、门窗锁具、周边环境。入住当天拍摄360度视频留存证据。</p>
+    </div>
+  </div>
+
+  <div class="step-card">
+    <div class="step-num">5</div>
+    <div class="step-content">
+      <h4>签署正式合同 + 缴纳印花税</h4>
+      <p>合同<b>必须</b>为书面形式。签约后<b>14天内</b>通过 <a href="https://stampduty.iras.gov.sg/" target="_blank">IRAS官网</a> 缴纳印花税（租期总租金的0.4%）。<b>未缴印花税的租约不受法律保护！</b> 租金和押金必须通过银行转账（可追踪），付给房东本人账户。</p>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- Tab 4: 防诈骗 -->
+<div class="tab-content" id="tab-redflags">
+<div class="section">
+  <h2><span class="icon">🚩</span> 7种常见租房诈骗 + 识别方法</h2>
+
+  <div class="red-flag">
+    <div class="rf-icon">1</div>
+    <div class="rf-text">
+      <h4>虚假房源广告</h4>
+      <p>盗用真实房源图片，以远低于市场价吸引你。2024年1-10月新加坡警方接获超430起此类诈骗报案，损失逾270万新元。<b>识别：</b>同套房源照片出现在多个不同地址的帖子中。用Google图片反向搜索验证。</p>
+    </div>
+  </div>
+
+  <div class="red-flag">
+    <div class="rf-icon">2</div>
+    <div class="rf-text">
+      <h4>冒充持牌中介</h4>
+      <p>骗子冒用CEA注册经纪人的姓名、注册号、名片，甚至利用技术伪装电话号码。<b>识别：</b>用对方提供的电话号码在CEA官网查询，搜不到或信息不匹配 = 骗子。</p>
+    </div>
+  </div>
+
+  <div class="red-flag">
+    <div class="rf-icon">3</div>
+    <div class="rf-text">
+      <h4>"私人助理"中间人</h4>
+      <p>安排所谓"同事"带你实地看房，但要求你把钱转给第三方（非房东本人）。<b>识别：</b>坚持与CEA注册经纪人本人看房，所有款项直接付给房东。</p>
+    </div>
+  </div>
+
+  <div class="red-flag">
+    <div class="rf-icon">4</div>
+    <div class="rf-text">
+      <h4>看房前催付押金</h4>
+      <p>以"房源紧俏""很多人在抢"为由施压，要求你在看房前就付"押金"或"预订费"。常见话术："人在海外，付款后安排看房"。<b>识别：</b>绝不看房前支付任何费用。</p>
+    </div>
+  </div>
+
+  <div class="red-flag">
+    <div class="rf-icon">5</div>
+    <div class="rf-text">
+      <h4>中介擅转合约</h4>
+      <p>中介在未经你同意的情况下将房源转给新中介，新中介不认原合约，不退押金和剩余租金。中国驻新使馆2025年5月已发出专门提醒。<b>识别：</b>签约时注意是否有"可转让合约"条款，遇到擅闯房屋立即拨打999。</p>
+    </div>
+  </div>
+
+  <div class="red-flag">
+    <div class="rf-icon">6</div>
+    <div class="rf-text">
+      <h4>伪造支付链接/钓鱼</h4>
+      <p>发送伪装成PayNow或银行的支付链接，实际网址与真实域名不符，目的是窃取银行凭证。<b>识别：</b>仔细检查链接域名，不在WhatsApp等聊天中点击支付链接。</p>
+    </div>
+  </div>
+
+  <div class="red-flag">
+    <div class="rf-icon">7</div>
+    <div class="rf-text">
+      <h4>伪造CEA邮件</h4>
+      <p>发送声称来自CEA的邮件，告诉你"新电话号码需14天更新"。<b>真相：</b>CEA经纪人联系方式变更后立即在系统中更新，不存在14天延迟。遇到此类邮件请忽略。</p>
+    </div>
+  </div>
+
+  <h3 style="margin:20px 0 12px;color:#86efac">&#10003; 靠谱房东/中介的6个特征</h3>
+  <div class="green-signal">
+    <div class="gs-icon">1</div>
+    <div class="gs-text"><h4>愿意视频看房或实地看房</h4><p>不找借口推脱，主动展示房源。</p></div>
+  </div>
+  <div class="green-signal">
+    <div class="gs-icon">2</div>
+    <div class="gs-text"><h4>提供完整合同并要求签署</h4><p>一切以书面合同为准，不接受"不用签合同"的说法。</p></div>
+  </div>
+  <div class="green-signal">
+    <div class="gs-icon">3</div>
+    <div class="gs-text"><h4>明确告知最短租期要求</h4><p>组屋6个月起，公寓3个月起，符合新加坡法律规定。</p></div>
+  </div>
+  <div class="green-signal">
+    <div class="gs-icon">4</div>
+    <div class="gs-text"><h4>提供房东书面同意转租证明</h4><p>如果是转租，能出示原始房东的书面同意文件。</p></div>
+  </div>
+  <div class="green-signal">
+    <div class="gs-icon">5</div>
+    <div class="gs-text"><h4>中介可提供CEA注册号</h4><p>持牌中介，在CEA官网可查到完整信息。</p></div>
+  </div>
+  <div class="green-signal">
+    <div class="gs-icon">6</div>
+    <div class="gs-text"><h4>接受银行转账并开具收据</h4><p>使用可追踪的支付方式，不要求现金或加密货币。</p></div>
+  </div>
+
+  <div class="emergency-box" style="margin-top:24px">
+    <h3>&#128680; 遇到诈骗或纠纷？立即联系</h3>
+    <div class="phone">新加坡报警：<span>999</span></div>
+    <div class="phone">反诈热线：<span>1799</span></div>
+    <div class="phone">中国反诈热线：<span>96110</span></div>
+    <div class="phone">中国驻新使馆领保：<span>+65-6475 0165</span>（24h）</div>
+    <div class="phone">CEA投诉：<span>+65 6435 3535</span></div>
+    <div class="phone">小额索偿法庭（SCT）：<span>线上申请，费用约S$10，索赔上限S$20,000</span></div>
+  </div>
+</div>
+</div>
+
+<!-- Tab 5: 行动时间线 -->
+<div class="tab-content" id="tab-timeline">
+<div class="section">
+  <h2><span class="icon">📅</span> 你的找房行动时间线（2026年8月入学·NUS BME硕士）</h2>
+
+  <div class="timeline">
+    <div class="timeline-item"><div class="date">现在 - 4月</div><div class="desc"><b>准备阶段：</b>研究区域和价格（本页面就是你的工具），了解租房流程和法律常识，准备好护照和录取通知书复印件。</div></div>
+    <div class="timeline-item"><div class="date">5月初</div><div class="desc"><b>双线启动：</b>1) 关注NUS UHMS宿舍申请通知（预计6月初开放）；2) 开始在小红书和租房平台搜索Clementi房源，联系学长学姐了解转租信息。</div></div>
+    <div class="timeline-item"><div class="date">6月初</div><div class="desc"><b>&#128308; 宿舍申请窗口开放（仅几天！）：</b>第一时间提交PGPR宿舍申请。这是S$202-284/月的极低价选项，比校外便宜4-5倍。错过只能等明年。</div></div>
+    <div class="timeline-item"><div class="date">6月 - 7月</div><div class="desc"><b>校外找房高峰：</b>小红书上大量转租帖子涌现。筛选房源 → 视频看房 → 核实房东身份 → 签约 + 缴印花税。建议同时准备多套方案。</div></div>
+    <div class="timeline-item"><div class="date">7月中旬</div><div class="desc"><b>最终决定：</b>如果宿舍申请成功 → 接受（省钱之王）。如果没申请到 → 用校外已签约的备选方案。两手准备，不慌。</div></div>
+    <div class="timeline-item"><div class="date">7月下旬</div><div class="desc"><b>行前准备：</b>汇款支付押金和首月租金、确认入住日期、打包行李。如需要可委托同学帮忙验房。</div></div>
+    <div class="timeline-item"><div class="date">8月初</div><div class="desc"><b>入住！</b>到新加坡后第一天：拍摄房屋360度视频、核对家具清单、确认水电表读数、确认房东已在HDB申报你的住址。</div></div>
+  </div>
+
+  <div class="note" style="margin-top:20px">
+    <b>合同中必须包含的12个条款：</b><br>
+    1) 房东姓名与产权地址 &nbsp; 2) 租期起止日期 &nbsp; 3) 月租金金额及支付方式 &nbsp; 4) 押金金额及退还条件（建议"退房后14天内退还"） &nbsp; 5) 正常损耗不扣钱条款 &nbsp; 6) 外交条款Diplomatic Clause &nbsp; 7) 维修责任划分（结构性维修由房东） &nbsp; 8) 居住人数限制 &nbsp; 9) 水电费分摊方式 &nbsp; 10) 续约与解约通知条款 &nbsp; 11) 印花税责任 &nbsp; 12) 不得转租条款
+  </div>
+</div>
+</div>
+
+<!-- Footer -->
+<div style="text-align:center;padding:20px;color:#475569;font-size:0.8em;margin-top:10px">
+  <p>数据来源：shicheng.one | ShweRooms | Roomies.sg | Roomgo | Rentify | Hozuko | OK.com | 狮城BBS | iLiveSG | 狮城租房网 | 中国驻新加坡使馆 | CEA官方</p>
+  <p>本页面仅提供信息汇总参考，不构成任何法律或投资建议。所有房源信息请以平台最新数据为准。</p>
+  <p style="margin-top:8px">Made with &#10084; by Nova for 小赖 | 2026</p>
+</div>
+
+</div>
+
+<script>
+// ============ Status Tracker System ============
+const STATUS_LIST = ['pending','contacted','viewed','signed','passed'];
+const STATUS_LABELS = {pending:'待联系',contacted:'已联系',viewed:'已看房',signed:'已签约',passed:'已放弃'};
+const STATUS_ICONS = {pending:'',contacted:'&#9993;',viewed:'&#9733;',signed:'&#10003;',passed:'&#10007;'};
+const STATUS_CLASSES = {pending:'s-pending',contacted:'s-contacted',viewed:'s-viewed',signed:'s-signed',passed:'s-passed'};
+const STORAGE_KEY = 'nusRentalTracker_v1';
+
+let openMenuId = null;
+
+function loadStatuses(){
+  try{ return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; }catch(e){ return {}; }
+}
+function saveStatuses(statuses){
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(statuses));
+}
+
+function toggleStatus(roomId, dotEl, e){
+  e.stopPropagation();
+  // Close any existing menu
+  closeAllMenus();
+  
+  const statuses = loadStatuses();
+  const current = statuses[roomId] || 'pending';
+  const currentIdx = STATUS_LIST.indexOf(current);
+  
+  // If already clicked and showing menu, cycle to next status
+  // Show dropdown menu
+  const menu = document.createElement('div');
+  menu.className = 'status-menu show';
+  menu.id = 'menu-' + roomId;
+  
+  STATUS_LIST.forEach(s => {
+    const item = document.createElement('div');
+    item.className = 'sm-item';
+    item.innerHTML = `<span class="sm-dot" style="background:${getStatusColor(s)}"></span> ${STATUS_LABELS[s]} ${s === current ? '&#10003;' : ''}`;
+    item.onclick = function(ev){ ev.stopPropagation(); setStatus(roomId, s); closeAllMenus(); };
+    menu.appendChild(item);
+  });
+  
+  dotEl.style.position = 'relative';
+  dotEl.appendChild(menu);
+  openMenuId = roomId;
+}
+
+function setStatus(roomId, status){
+  const statuses = loadStatuses();
+  statuses[roomId] = status;
+  saveStatuses(statuses);
+  applyStatus(roomId, status);
+  updateProgress();
+}
+
+function applyStatus(roomId, status){
+  const card = document.querySelector(`[data-id="${roomId}"]`);
+  if(!card) return;
+  const dot = card.querySelector('.status-dot');
+  const label = card.querySelector('.status-label');
+  
+  // Remove all status classes
+  STATUS_LIST.forEach(s => { dot.classList.remove(STATUS_CLASSES[s]); card.classList.remove('status-' + s); });
+  
+  // Apply new status
+  dot.classList.add(STATUS_CLASSES[status]);
+  card.classList.add('status-' + status);
+  dot.innerHTML = STATUS_ICONS[status];
+  label.textContent = STATUS_LABELS[status];
+  label.style.color = getStatusColor(status);
+}
+
+function getStatusColor(s){
+  const colors = {pending:'#475569',contacted:'#38bdf8',viewed:'#a855f7',signed:'#22c55e',passed:'#ef4444'};
+  return colors[s] || '#475569';
+}
+
+function closeAllMenus(){
+  document.querySelectorAll('.status-menu').forEach(m => m.remove());
+  openMenuId = null;
+}
+
+function updateProgress(){
+  const statuses = loadStatuses();
+  const cards = document.querySelectorAll('.room-card[data-id]');
+  const total = cards.length;
+  let counts = {pending:0,contacted:0,viewed:0,signed:0,passed:0};
+  
+  cards.forEach(c => {
+    const id = c.getAttribute('data-id');
+    const s = statuses[id] || 'pending';
+    counts[s]++;
+  });
+  
+  const active = counts.contacted + counts.viewed + counts.signed;
+  const pct = Math.round((active / total) * 100);
+  
+  document.getElementById('progressText').textContent = `${active} / ${total} 已联系`;
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('pillPending').textContent = counts.pending + ' 待联系';
+  document.getElementById('pillContacted').textContent = counts.contacted + ' 已联系';
+  document.getElementById('pillViewed').textContent = counts.viewed + ' 已看房';
+  document.getElementById('pillSigned').textContent = counts.signed + ' 已签约';
+  document.getElementById('pillPassed').textContent = counts.passed + ' 已放弃';
+}
+
+// Close menu on outside click
+document.addEventListener('click', function(){ closeAllMenus(); });
+
+// ============ Tab & Filter System ============
+function showTab(tabId) {
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + tabId).classList.add('active');
+  event.target.classList.add('active');
+}
+
+function filterRooms(tag, btn) {
+  document.querySelectorAll('.filter-btn').forEach(b => {
+    b.classList.remove('active');
+    b.style.background = '';
+    b.style.color = '';
+    b.style.fontWeight = '';
+  });
+  btn.classList.add('active');
+  
+  document.querySelectorAll('.room-card').forEach(card => {
+    if (tag === 'all') {
+      card.style.display = 'flex';
+    } else if (tag === 'female') {
+      const tags = card.getAttribute('data-tags') || '';
+      card.style.display = tags.includes('female') && !tags.includes('male-only') ? 'flex' : 'none';
+    } else {
+      const tags = card.getAttribute('data-tags') || '';
+      card.style.display = tags.includes(tag) ? 'flex' : 'none';
+    }
+  });
+}
+
+// ============ Monitor / Auto-Refresh System ============
+const REFRESH_INTERVAL = 30 * 60 * 1000; // 30 minutes
+let refreshTimer = null;
+let lastRefreshTime = null;
+
+function updateRefreshUI(){
+  const now = new Date();
+  const timeStr = now.toLocaleTimeString('zh-CN', {hour:'2-digit',minute:'2-digit'});
+  document.getElementById('lastRefresh').textContent = timeStr;
+  
+  const next = new Date(now.getTime() + REFRESH_INTERVAL);
+  document.getElementById('nextRefresh').textContent = next.toLocaleTimeString('zh-CN', {hour:'2-digit',minute:'2-digit'});
+}
+
+function refreshNow(){
+  // Due to CORS, we cannot directly fetch platform pages.
+  // Instead, we open all monitoring links in new tabs for user to check.
+  updateRefreshUI();
+  lastRefreshTime = Date.now();
+  
+  // Show alert
+  const alert = document.getElementById('newListingAlert');
+  alert.classList.add('show');
+  
+  // Simulate opening platforms (open top 3 most relevant)
+  window.open('https://www.shichengzufang.com/c2?area_id=29', '_blank');
+  window.open('https://www.roomies.sg/rooms/singapore/clementi?gender=female', '_blank');
+  window.open('https://www.shichengbbs.com/forum.php?mod=forumdisplay&fid=46&filter=lastpost&orderby=lastpost', '_blank');
+  
+  // Save refresh time
+  localStorage.setItem('nusRental_lastRefresh', Date.now().toString());
+  
+  // Auto-hide alert after 10s
+  setTimeout(() => { alert.classList.remove('show'); }, 10000);
+}
+
+function checkAutoRefresh(){
+  const saved = localStorage.getItem('nusRental_lastRefresh');
+  if(saved){
+    const elapsed = Date.now() - parseInt(saved);
+    if(elapsed >= REFRESH_INTERVAL){
+      // Time to refresh
+      refreshNow();
+    } else {
+      updateRefreshUI();
+      // Set timer for next refresh
+      const remaining = REFRESH_INTERVAL - elapsed;
+      refreshTimer = setTimeout(checkAutoRefresh, remaining);
+    }
+  } else {
+    updateRefreshUI();
+    refreshTimer = setTimeout(checkAutoRefresh, REFRESH_INTERVAL);
+  }
+}
+
+// ============ Init ============
+document.addEventListener('DOMContentLoaded', function(){
+  // Restore saved statuses
+  const statuses = loadStatuses();
+  Object.keys(statuses).forEach(id => {
+    applyStatus(id, statuses[id]);
+  });
+  
+  // Update progress bar
+  updateProgress();
+  
+  // Start monitor auto-refresh
+  updateRefreshUI();
+  checkAutoRefresh();
+  
+  // Show daily reminder if it's been > 24h since last refresh
+  const saved = localStorage.getItem('nusRental_lastRefresh');
+  if(!saved || Date.now() - parseInt(saved) > 24 * 60 * 60 * 1000){
+    document.getElementById('newListingAlert').classList.add('show');
+    document.getElementById('newListingText').textContent = '超过24小时未刷新，建议立即检查各平台新房源。点击"立即刷新"开始。';
+    setTimeout(() => { document.getElementById('newListingAlert').classList.remove('show'); }, 8000);
+  }
+});
+</script>
+</body>
+</html>

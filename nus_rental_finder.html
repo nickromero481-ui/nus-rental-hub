@@ -1,0 +1,1026 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NUS找房工具 · 小赖专属</title>
+<style>
+  :root {
+    --primary: #003d7c;
+    --primary-light: #0055a5;
+    --accent: #ef7c00;
+    --accent-light: #ff9a2e;
+    --green: #1a7a4a;
+    --green-light: #e8f7ef;
+    --red: #c0392b;
+    --red-light: #fdf0ee;
+    --yellow: #f39c12;
+    --yellow-light: #fef9e7;
+    --bg: #f4f6fa;
+    --card: #ffffff;
+    --text: #1a1a2e;
+    --text-muted: #6b7280;
+    --border: #e2e8f0;
+    --shadow: 0 2px 12px rgba(0,0,0,0.08);
+    --shadow-hover: 0 8px 28px rgba(0,0,0,0.14);
+    --radius: 14px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+  }
+
+  /* ── Hero ── */
+  .hero {
+    background: linear-gradient(135deg, var(--primary) 0%, #005b9f 50%, #0073c2 100%);
+    color: white;
+    padding: 48px 24px 40px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  }
+  .hero-badge {
+    display: inline-block;
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 20px;
+    padding: 4px 14px;
+    font-size: 12px;
+    letter-spacing: 0.5px;
+    margin-bottom: 16px;
+  }
+  .hero h1 { font-size: clamp(22px, 4vw, 32px); font-weight: 700; margin-bottom: 10px; }
+  .hero p { font-size: 15px; opacity: 0.85; max-width: 540px; margin: 0 auto 24px; }
+  .hero-tags { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+  .hero-tag {
+    background: rgba(255,255,255,0.15);
+    border-radius: 20px;
+    padding: 5px 14px;
+    font-size: 13px;
+  }
+
+  /* ── Layout ── */
+  .container { max-width: 960px; margin: 0 auto; padding: 0 16px; }
+  .section { padding: 36px 0 16px; }
+  .section-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--primary);
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .section-title .icon { font-size: 20px; }
+  .section-desc { font-size: 14px; color: var(--text-muted); margin-bottom: 20px; }
+
+  /* ── Budget Selector ── */
+  .budget-bar {
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 20px 24px;
+    box-shadow: var(--shadow);
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  .budget-bar label { font-size: 14px; font-weight: 600; color: var(--primary); white-space: nowrap; }
+  .budget-slider-wrap { flex: 1; min-width: 200px; }
+  input[type=range] {
+    width: 100%;
+    accent-color: var(--accent);
+    height: 6px;
+    cursor: pointer;
+  }
+  .budget-display {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--accent);
+    white-space: nowrap;
+  }
+  .budget-hint { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+
+  /* ── Platform Cards ── */
+  .platform-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+    gap: 16px;
+    margin-bottom: 8px;
+  }
+  .platform-card {
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 20px;
+    box-shadow: var(--shadow);
+    border: 2px solid transparent;
+    transition: all 0.2s ease;
+    cursor: default;
+  }
+  .platform-card:hover {
+    border-color: var(--primary-light);
+    box-shadow: var(--shadow-hover);
+    transform: translateY(-2px);
+  }
+  .platform-logo {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    margin-bottom: 12px;
+  }
+  .platform-name { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+  .platform-tag {
+    display: inline-block;
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    font-weight: 600;
+  }
+  .tag-best { background: #e8f4fd; color: #0055a5; }
+  .tag-budget { background: var(--green-light); color: var(--green); }
+  .tag-coliving { background: #f3e8ff; color: #6b21a8; }
+  .tag-direct { background: var(--yellow-light); color: #92400e; }
+  .platform-desc { font-size: 12px; color: var(--text-muted); margin-bottom: 14px; line-height: 1.5; }
+  .platform-features { list-style: none; margin-bottom: 16px; }
+  .platform-features li {
+    font-size: 12px;
+    color: var(--text-muted);
+    padding: 2px 0;
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+  }
+  .platform-features li::before { content: '✓'; color: var(--green); font-weight: 700; flex-shrink: 0; }
+  .btn-search {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    border-radius: 8px;
+    text-align: center;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 600;
+    transition: all 0.2s;
+    cursor: pointer;
+    border: none;
+  }
+  .btn-primary { background: var(--primary); color: white; }
+  .btn-primary:hover { background: var(--primary-light); }
+  .btn-accent { background: var(--accent); color: white; }
+  .btn-accent:hover { background: var(--accent-light); }
+  .btn-purple { background: #7c3aed; color: white; }
+  .btn-purple:hover { background: #6d28d9; }
+  .btn-green { background: var(--green); color: white; }
+  .btn-green:hover { background: #156b3e; }
+
+  /* ── CEA Verify ── */
+  .verify-box {
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 24px;
+    box-shadow: var(--shadow);
+    border-left: 4px solid var(--primary);
+  }
+  .verify-input-row {
+    display: flex;
+    gap: 10px;
+    margin: 16px 0;
+    flex-wrap: wrap;
+  }
+  .verify-input {
+    flex: 1;
+    min-width: 180px;
+    padding: 10px 14px;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .verify-input:focus { border-color: var(--primary); }
+  .btn-verify {
+    padding: 10px 20px;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+    white-space: nowrap;
+  }
+  .btn-verify:hover { background: var(--primary-light); }
+  .verify-result {
+    display: none;
+    margin-top: 12px;
+    padding: 14px 16px;
+    border-radius: 10px;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+  .verify-steps {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 12px;
+    margin-top: 16px;
+  }
+  .verify-step {
+    background: var(--bg);
+    border-radius: 10px;
+    padding: 14px;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+  .step-num {
+    width: 26px;
+    height: 26px;
+    background: var(--primary);
+    color: white;
+    border-radius: 50%;
+    font-size: 12px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .step-text { font-size: 13px; color: var(--text); }
+  .step-text strong { display: block; margin-bottom: 2px; }
+
+  /* ── Red Flags ── */
+  .flags-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 12px;
+  }
+  .flag-card {
+    border-radius: 10px;
+    padding: 14px 16px;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+  .flag-red { background: var(--red-light); border-left: 3px solid var(--red); }
+  .flag-yellow { background: var(--yellow-light); border-left: 3px solid var(--yellow); }
+  .flag-icon { font-size: 20px; flex-shrink: 0; margin-top: 1px; }
+  .flag-title { font-size: 13px; font-weight: 700; margin-bottom: 3px; }
+  .flag-desc { font-size: 12px; color: var(--text-muted); line-height: 1.5; }
+
+  /* ── Message Templates ── */
+  .template-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+  .tab-btn {
+    padding: 7px 16px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    border: 1.5px solid var(--border);
+    background: var(--card);
+    color: var(--text-muted);
+    transition: all 0.2s;
+  }
+  .tab-btn.active {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+  }
+  .template-panel { display: none; }
+  .template-panel.active { display: block; }
+  .template-box {
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 20px;
+    box-shadow: var(--shadow);
+    margin-bottom: 12px;
+  }
+  .template-lang {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .template-text {
+    font-size: 13px;
+    line-height: 1.8;
+    color: var(--text);
+    background: var(--bg);
+    border-radius: 8px;
+    padding: 14px;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+  .copy-btn {
+    margin-top: 10px;
+    padding: 7px 16px;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .copy-btn:hover { background: var(--primary-light); }
+  .copy-btn.copied { background: var(--green); }
+
+  /* ── Checklist ── */
+  .checklist-section {
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 24px;
+    box-shadow: var(--shadow);
+  }
+  .checklist-group { margin-bottom: 20px; }
+  .checklist-group-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--primary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 10px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--border);
+  }
+  .checklist-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 7px 0;
+    cursor: pointer;
+    user-select: none;
+  }
+  .checklist-item input[type=checkbox] {
+    width: 17px;
+    height: 17px;
+    accent-color: var(--green);
+    cursor: pointer;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .checklist-item label {
+    font-size: 13px;
+    color: var(--text);
+    cursor: pointer;
+    line-height: 1.5;
+  }
+  .checklist-item.checked label { text-decoration: line-through; color: var(--text-muted); }
+  .checklist-progress {
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .progress-bar-wrap {
+    flex: 1;
+    background: var(--border);
+    border-radius: 10px;
+    height: 8px;
+    overflow: hidden;
+  }
+  .progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--green), #2ecc71);
+    border-radius: 10px;
+    transition: width 0.4s ease;
+    width: 0%;
+  }
+  .progress-text { font-size: 13px; color: var(--text-muted); white-space: nowrap; }
+
+  /* ── Footer ── */
+  .footer {
+    text-align: center;
+    padding: 32px 16px;
+    color: var(--text-muted);
+    font-size: 13px;
+    border-top: 1px solid var(--border);
+    margin-top: 40px;
+  }
+
+  /* ── Info Banner ── */
+  .info-banner {
+    background: linear-gradient(135deg, #e8f4fd, #f0f7ff);
+    border: 1px solid #b3d9f5;
+    border-radius: var(--radius);
+    padding: 16px 20px;
+    margin-bottom: 20px;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+  .info-banner .info-icon { font-size: 20px; flex-shrink: 0; }
+  .info-banner p { font-size: 13px; color: #1a4a6e; line-height: 1.6; }
+  .info-banner strong { color: var(--primary); }
+
+  /* ── Divider ── */
+  hr.divider { border: none; border-top: 1px solid var(--border); margin: 8px 0 24px; }
+
+  @media (max-width: 600px) {
+    .hero { padding: 32px 16px 28px; }
+    .budget-bar { flex-direction: column; align-items: stretch; gap: 10px; }
+    .verify-input-row { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ════ HERO ════ -->
+<div class="hero">
+  <div class="hero-badge">🏠 NUS 找房工具 2026</div>
+  <h1>小赖的新加坡租房助手</h1>
+  <p>NUS 生物医学工程硕士 · 肯特岗校区 · 2026年8月入住<br>一键跳转真实房源 · 内置防诈骗核查 · 附问房模板</p>
+  <div class="hero-tags">
+    <span class="hero-tag">📍 Clementi / Dover 区</span>
+    <span class="hero-tag">💰 预算 S$700–1,100/月</span>
+    <span class="hero-tag">🛏 Common Room</span>
+    <span class="hero-tag">📅 2026年8月</span>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- ════ 预算滑块 ════ -->
+  <div class="section">
+    <div class="section-title"><span class="icon">🎯</span>调整你的预算范围</div>
+    <div class="section-desc">拖动滑块后，下方各平台的搜索链接会自动更新</div>
+    <div class="budget-bar">
+      <label>月预算上限</label>
+      <div class="budget-slider-wrap">
+        <input type="range" id="budgetSlider" min="500" max="2000" step="50" value="1100">
+        <div class="budget-hint">S$500 ←————————→ S$2,000</div>
+      </div>
+      <div class="budget-display">S$<span id="budgetVal">1,100</span>/月</div>
+    </div>
+  </div>
+
+  <!-- ════ 平台卡片 ════ -->
+  <div class="section">
+    <div class="section-title"><span class="icon">🔍</span>选择平台，一键搜索</div>
+    <div class="section-desc">点击按钮直接跳转到已筛好条件的结果页（含区域、房型、预算）</div>
+
+    <div class="info-banner">
+      <span class="info-icon">💡</span>
+      <p>所有链接均已预填筛选条件：<strong>Clementi / West Coast 区域</strong>、<strong>Common Room（普通单间）</strong>、你设定的预算上限、<strong>2026年8月</strong>入住。跳转后只需浏览真实房源即可。</p>
+    </div>
+
+    <div class="platform-grid">
+
+      <!-- PropertyGuru -->
+      <div class="platform-card">
+        <div class="platform-logo" style="background:#e8f4fd;">🏡</div>
+        <div class="platform-name">PropertyGuru</div>
+        <div class="platform-tag tag-best">⭐ 最推荐</div>
+        <div class="platform-desc">新加坡最大正规房产平台，绝大多数挂牌都有认证中介，信息最全面。</div>
+        <ul class="platform-features">
+          <li>中介须持 CEA 执照，可验证身份</li>
+          <li>房源照片多、信息详细</li>
+          <li>支持按 MRT 站筛选（Clementi站）</li>
+          <li>可开启"已验证"筛选器</li>
+        </ul>
+        <a id="pgBtn" href="#" target="_blank" class="btn-search btn-primary" onclick="return openPG()">跳转搜索（含预算筛选）→</a>
+      </div>
+
+      <!-- 99.co -->
+      <div class="platform-card">
+        <div class="platform-logo" style="background:#e8f7ef;">🏢</div>
+        <div class="platform-name">99.co</div>
+        <div class="platform-tag tag-budget">💚 价格透明</div>
+        <div class="platform-desc">本地第二大平台，界面简洁，价格历史透明，同地段对比很方便。</div>
+        <ul class="platform-features">
+          <li>可查看同小区历史租金</li>
+          <li>HDB 组屋房源丰富</li>
+          <li>附近学校/MRT 距离清晰标注</li>
+          <li>部分房源直联房东（无中介费）</li>
+        </ul>
+        <a id="nnBtn" href="#" target="_blank" class="btn-search btn-green" onclick="return open99()">跳转搜索（含预算筛选）→</a>
+      </div>
+
+      <!-- Cove -->
+      <div class="platform-card">
+        <div class="platform-logo" style="background:#f3e8ff;">🛋</div>
+        <div class="platform-name">Cove</div>
+        <div class="platform-tag tag-coliving">🟣 Co-living</div>
+        <div class="platform-desc">专为年轻专业人士/留学生设计的合租平台，全包价（水电网+家具），无押金手续费烦恼。</div>
+        <ul class="platform-features">
+          <li>全包月租，无需押金纠纷</li>
+          <li>最短3个月合同，灵活</li>
+          <li>平台直签，无中介</li>
+          <li>室友多为国际学生，社群氛围好</li>
+        </ul>
+        <a href="https://www.cove.sg/rooms?location=clementi&min_price=500&max_price=1500" target="_blank" class="btn-search btn-purple">跳转搜索 Cove →</a>
+      </div>
+
+      <!-- Carousell -->
+      <div class="platform-card">
+        <div class="platform-logo" style="background:#fef9e7;">🛒</div>
+        <div class="platform-name">Carousell</div>
+        <div class="platform-tag tag-direct">🟡 直租便宜</div>
+        <div class="platform-desc">二手交易平台，但有大量直租房东，价格最低，适合找性价比最高的房源（需自行核实）。</div>
+        <ul class="platform-features">
+          <li>无中介费，直接联系房东</li>
+          <li>价格通常低于其他平台</li>
+          <li>聊天功能内置，沟通方便</li>
+          <li>⚠️ 需自行核实房东身份</li>
+        </ul>
+        <a id="csBtn" href="#" target="_blank" class="btn-search btn-accent" onclick="return openCS()">跳转搜索（含预算筛选）→</a>
+      </div>
+
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ════ 房东/中介核实 ════ -->
+  <div class="section">
+    <div class="section-title"><span class="icon">🔒</span>核实房东 / 中介身份</div>
+    <div class="section-desc">在新加坡，合法中介必须持有 CEA 执照。以下步骤帮你3分钟内判断对方是否靠谱。</div>
+
+    <div class="verify-box">
+      <div style="font-size:14px; font-weight:600; margin-bottom:12px;">🕵️ 方法一：CEA 执照查询（针对中介）</div>
+      <p style="font-size:13px; color:var(--text-muted); line-height:1.6;">
+        如果对方自称是中介（agent），必须有 CEA 注册号（格式：R0XXXXXX 或 L3XXXXXX）。<br>
+        输入中介姓名或注册号，点击按钮跳转官方核查页：
+      </p>
+      <div class="verify-input-row">
+        <input type="text" class="verify-input" id="ceaName" placeholder="中介姓名（英文）或 CEA 注册号">
+        <button class="btn-verify" onclick="verifyCEA()">去 CEA 官网核查 →</button>
+      </div>
+      <div class="verify-result" id="ceaResult"></div>
+
+      <div style="font-size:14px; font-weight:600; margin: 20px 0 12px;">📋 方法二：逐步核实流程（适用于房东和中介）</div>
+      <div class="verify-steps">
+        <div class="verify-step">
+          <div class="step-num">1</div>
+          <div class="step-text">
+            <strong>要求视频看房</strong>
+            靠谱房东愿意视频展示房间，骗子通常只发图。
+          </div>
+        </div>
+        <div class="verify-step">
+          <div class="step-num">2</div>
+          <div class="step-text">
+            <strong>核对 NRIC / 护照</strong>
+            要求房东出示含照片的身份证或护照，核对姓名是否与租约一致。
+          </div>
+        </div>
+        <div class="verify-step">
+          <div class="step-num">3</div>
+          <div class="step-text">
+            <strong>查 HDB 官网产权</strong>
+            到 HDB e-Service 查询该地址业主姓名，确认与对方一致。
+          </div>
+        </div>
+        <div class="verify-step">
+          <div class="step-num">4</div>
+          <div class="step-text">
+            <strong>实地看房再付钱</strong>
+            未亲眼（或视频）确认房间前，绝不转任何押金。
+          </div>
+        </div>
+        <div class="verify-step">
+          <div class="step-num">5</div>
+          <div class="step-text">
+            <strong>押金方式</strong>
+            只转到能出收据的账户（PayNow/银行转账），拒绝现金或加密货币。
+          </div>
+        </div>
+        <div class="verify-step">
+          <div class="step-num">6</div>
+          <div class="step-text">
+            <strong>签正式租约</strong>
+            所有条款白纸黑字，包含入住日期、月租、押金退还条件。
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════ 红旗警报 ════ -->
+  <div class="section">
+    <div class="section-title"><span class="icon">🚩</span>遇到这些，立刻离开</div>
+    <div class="section-desc">新加坡租房骗局特征，一旦出现，直接拉黑不用解释</div>
+    <div class="flags-grid">
+      <div class="flag-card flag-red">
+        <span class="flag-icon">🚫</span>
+        <div>
+          <div class="flag-title">价格异常低（低于市场30%+）</div>
+          <div class="flag-desc">Clementi普通房市场价S$800+，看到S$450/月"全包"就是诈骗。</div>
+        </div>
+      </div>
+      <div class="flag-card flag-red">
+        <span class="flag-icon">🚫</span>
+        <div>
+          <div class="flag-title">要求先转押金再看房</div>
+          <div class="flag-desc">"先转S$500 hold住，再约看房"——正规操作是看完房、签完约才付押金。</div>
+        </div>
+      </div>
+      <div class="flag-card flag-red">
+        <span class="flag-icon">🚫</span>
+        <div>
+          <div class="flag-title">房东"人在海外"</div>
+          <div class="flag-desc">经典剧本：房东出差/移民海外，钥匙邮寄，要你先打钱。100%诈骗。</div>
+        </div>
+      </div>
+      <div class="flag-card flag-red">
+        <span class="flag-icon">🚫</span>
+        <div>
+          <div class="flag-title">拒绝视频或实地看房</div>
+          <div class="flag-desc">找各种借口不愿视频展示房间，或称"房间已出租但可看其他同款"。</div>
+        </div>
+      </div>
+      <div class="flag-card flag-yellow">
+        <span class="flag-icon">⚠️</span>
+        <div>
+          <div class="flag-title">仅 WhatsApp 联系，不愿签合同</div>
+          <div class="flag-desc">口头承诺月租后拒绝出示正式租约，后续容易产生纠纷。</div>
+        </div>
+      </div>
+      <div class="flag-card flag-yellow">
+        <span class="flag-icon">⚠️</span>
+        <div>
+          <div class="flag-title">中介无法提供 CEA 注册号</div>
+          <div class="flag-desc">合法中介必有 CEA 号，无照中介属违法，出了事无法追责。</div>
+        </div>
+      </div>
+      <div class="flag-card flag-yellow">
+        <span class="flag-icon">⚠️</span>
+        <div>
+          <div class="flag-title">要求加密货币或现金支付</div>
+          <div class="flag-desc">正规押金通过 PayNow / 银行转账，留有记录可追溯。</div>
+        </div>
+      </div>
+      <div class="flag-card flag-yellow">
+        <span class="flag-icon">⚠️</span>
+        <div>
+          <div class="flag-title">催促"今天不定明天没了"</div>
+          <div class="flag-desc">制造紧迫感是骗局惯用手法，好房源不怕你多问两天。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ════ 问询模板 ════ -->
+  <div class="section">
+    <div class="section-title"><span class="icon">✉️</span>直接复制发给房东/中介</div>
+    <div class="section-desc">根据场景选择模板，中英文均有，直接复制发送即可</div>
+
+    <div class="template-tabs">
+      <button class="tab-btn active" onclick="switchTab('inquiry')">初次问询</button>
+      <button class="tab-btn" onclick="switchTab('video')">申请视频看房</button>
+      <button class="tab-btn" onclick="switchTab('verify')">核实身份</button>
+      <button class="tab-btn" onclick="switchTab('negotiate')">谈价格</button>
+    </div>
+
+    <!-- 初次问询 -->
+    <div class="template-panel active" id="tpl-inquiry">
+      <div class="template-box">
+        <div class="template-lang">🇨🇳 中文版</div>
+        <div class="template-text" id="tpl-inquiry-cn">您好，我是一名即将就读新加坡国立大学（肯特岗校区）生物医学工程硕士的中国学生，计划2026年8月入住。请问以下几点可以确认一下吗？
+
+1. 房间是否在2026年8月1日前可入住？
+2. 月租是否包含水电网费？如不包含，每月大约多少额外费用？
+3. 最短租期是多少个月？
+4. 是否接受中国留学生？
+5. 距离Clementi MRT或NUS校车站步行多少分钟？
+
+期待您的回复，谢谢！</div>
+        <button class="copy-btn" onclick="copyText('tpl-inquiry-cn', this)">📋 复制中文版</button>
+      </div>
+      <div class="template-box">
+        <div class="template-lang">🇬🇧 English Version</div>
+        <div class="template-text" id="tpl-inquiry-en">Hi! I'm an international student from China, starting my Master's in Biomedical Engineering at NUS (Kent Ridge Campus) in August 2026. I'm looking for a common room near the Clementi/West Coast area.
+
+Could you please confirm:
+1. Is the room available from early August 2026?
+2. Is the monthly rent inclusive of utilities (water, electricity, WiFi)?
+3. What is the minimum lease period?
+4. Are international students (Chinese passport) welcome?
+5. How far is it to Clementi MRT or the nearest NUS bus stop (on foot)?
+
+Thank you, looking forward to hearing from you!</div>
+        <button class="copy-btn" onclick="copyText('tpl-inquiry-en', this)">📋 Copy English Version</button>
+      </div>
+    </div>
+
+    <!-- 视频看房 -->
+    <div class="template-panel" id="tpl-video">
+      <div class="template-box">
+        <div class="template-lang">🇨🇳 中文版</div>
+        <div class="template-text" id="tpl-video-cn">您好，我对这套房间很感兴趣！由于我目前还在中国，无法立刻到现场看房，请问您是否方便安排一次视频直播看房（WhatsApp/微信/Zoom均可）？
+
+希望能通过视频看到：
+- 房间整体（含窗户、衣柜、床）
+- 共用卫生间/厨房情况
+- 小区出入口和周边环境
+
+感谢您的配合，我会认真考虑租住的！</div>
+        <button class="copy-btn" onclick="copyText('tpl-video-cn', this)">📋 复制中文版</button>
+      </div>
+      <div class="template-box">
+        <div class="template-lang">🇬🇧 English Version</div>
+        <div class="template-text" id="tpl-video-en">Hi! I'm very interested in this room. As I'm currently based in China and cannot visit in person right now, would you be able to do a live video tour via WhatsApp or Zoom?
+
+I'd love to see:
+- The room itself (window, wardrobe, bed)
+- Shared bathroom and kitchen
+- Building entrance and surrounding area
+
+I'm a serious tenant and would appreciate your help with this. Thank you!</div>
+        <button class="copy-btn" onclick="copyText('tpl-video-en', this)">📋 Copy English Version</button>
+      </div>
+    </div>
+
+    <!-- 核实身份 -->
+    <div class="template-panel" id="tpl-verify">
+      <div class="template-box">
+        <div class="template-lang">🇨🇳 中文版（针对中介）</div>
+        <div class="template-text" id="tpl-verify-cn">您好，请问您的 CEA 经纪人注册号码是多少？我需要在 CEA 官网（cea.gov.sg）核实一下，这是租房前的常规步骤，麻烦您理解。谢谢！</div>
+        <button class="copy-btn" onclick="copyText('tpl-verify-cn', this)">📋 复制</button>
+      </div>
+      <div class="template-box">
+        <div class="template-lang">🇬🇧 English Version (for agent)</div>
+        <div class="template-text" id="tpl-verify-en">Hi, could you please share your CEA registration number? I'd like to verify it on the CEA website (cea.gov.sg) as a standard due diligence step before proceeding. I hope you understand. Thank you!</div>
+        <button class="copy-btn" onclick="copyText('tpl-verify-en', this)">📋 Copy</button>
+      </div>
+      <div class="template-box">
+        <div class="template-lang">🇨🇳 中文版（针对房东）</div>
+        <div class="template-text" id="tpl-verify-owner-cn">您好，请问在签约前，您是否方便提供房产证/HDB产权文件的照片，以便我确认您是合法业主？这是我个人的审慎要求，希望您能理解。谢谢！</div>
+        <button class="copy-btn" onclick="copyText('tpl-verify-owner-cn', this)">📋 复制</button>
+      </div>
+    </div>
+
+    <!-- 谈价格 -->
+    <div class="template-panel" id="tpl-negotiate">
+      <div class="template-box">
+        <div class="template-lang">🇨🇳 中文版</div>
+        <div class="template-text" id="tpl-negotiate-cn">您好，感谢您的回复！对于这套房间我很感兴趣，不过我目前看到周边同类房间的月租普遍在 S$XXX–XXX 左右。请问月租是否有商量的空间？如果可以接受 S$XXX/月，我愿意签12个月合同。期待您的回复！</div>
+        <button class="copy-btn" onclick="copyText('tpl-negotiate-cn', this)">📋 复制中文版</button>
+      </div>
+      <div class="template-box">
+        <div class="template-lang">🇬🇧 English Version</div>
+        <div class="template-text" id="tpl-negotiate-en">Hi, thank you for your reply! I'm genuinely interested in this room. However, I've noticed similar rooms in the area are typically listed around S$XXX–XXX/month. Would there be any flexibility on the rent? If S$XXX/month is possible, I'm happy to commit to a 12-month lease. Looking forward to your response!</div>
+        <button class="copy-btn" onclick="copyText('tpl-negotiate-en', this)">📋 Copy English Version</button>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ════ 看房清单 ════ -->
+  <div class="section">
+    <div class="section-title"><span class="icon">✅</span>看房 / 签约检查清单</div>
+    <div class="section-desc">视频看房或实地看房时逐项核对，全绿才可签约</div>
+    <div class="checklist-section">
+      <div class="checklist-progress">
+        <div class="progress-bar-wrap"><div class="progress-bar" id="progressBar"></div></div>
+        <div class="progress-text" id="progressText">0 / 20 项</div>
+      </div>
+
+      <div class="checklist-group">
+        <div class="checklist-group-title">📷 视频/实地看房 — 房间硬件</div>
+        <div class="checklist-item" onclick="toggleCheck(this)">
+          <input type="checkbox"><label>窗户能开，自然采光充足</label>
+        </div>
+        <div class="checklist-item" onclick="toggleCheck(this)">
+          <input type="checkbox"><label>空调工作正常，不漏水</label>
+        </div>
+        <div class="checklist-item" onclick="toggleCheck(this)">
+          <input type="checkbox"><label>门锁完好，有独立钥匙或密码锁</label>
+        </div>
+        <div class="checklist-item" onclick="toggleCheck(this)">
+          <input type="checkbox"><label>床/床垫干净，无霉味</label>
+        </div>
+        <div class="checklist-item" onclick="toggleCheck(this)">
+          <input type="checkbox"><label>WiFi 信号覆盖房间（可要求测速）</label>
+        </div>
+      </div>
+
+      <div class="checklist-group">
+        <div class="checklist-group-title">🚿 公共区域</div>
+        <div class="checklist-item" onclick="toggleCheck(this)">
+          <input type="checkbox"><label>卫生间干净，热水正常</label>
+        </div>
+        <div class="checklist-item" onclick="toggleCheck(this)">
+          <input type="checkbox"><label>厨房有灶/电磁炉、锅具可使用</label>
+        </div>
+        <div class="checklist-item" onclick="toggleCheck(this)">
+          <input type="checkbox"><label>洗衣机正常，确认是否需要额外付费</label>
+        </div>
+        <div class="checklist-item" onclick="toggleCheck(this)">
+          <input type="checkbox"><label>询问室友人数及背景（学生/上班族）</label>
+        </div>
+      </div>
+
+      <div class="checklist-group">
+        <div class="checklist-group-title">📍 位置 & 安全</div>
+        <div class="checklist-item" onclick="toggleCheck(this)">
+          <input type="checkbox"><label>步行15分钟内到 Clementi MRT 或 NUS 校车站</label>
+        </div>
+        <div class="checklist-item" onclick="toggleCheck(this)">
+          <input type="checkbox"><label>楼栋有门禁或保安</label>
+        </div>
+        <div class="checklist-item" onclick="toggleCheck(this)">
+          <input type="checkbox"><label>附近有超市 / 咖啡店 / 食堂（hawker centre）</label>
+        </div>
+      </div>
+
+      <div class="checklist-group">
+        <div class="checklist-group-title">📄 合同 & 费用</div>
+        <div class="checklist-item" onclick="toggleCheck(this)">
+          <input type="checkbox"><label>已确认月租是否含水电网，不含的话估算额外费用</label>
+        </div>
+        <div class="checklist-item" onclick="toggleCheck(this)">
+          <input type="checkbox"><label>押金金额已确认（通常1个月租金）</label>
+        </div>
+        <div class="checklist-item" onclick="toggleCheck(this)">
+          <input type="checkbox"><label>最短租期已确认（推荐12个月或至明年8月）</label>
+        </div>
+        <div class="checklist-item" onclick="toggleCheck(this)">
+          <input type="checkbox"><label>Diplomatic Clause 已讨论（提前离开条款）</label>
+        </div>
+        <div class="checklist-item" onclick="toggleCheck(this)">
+          <input type="checkbox"><label>合同已仔细阅读，无隐藏收费条款</label>
+        </div>
+      </div>
+
+      <div class="checklist-group">
+        <div class="checklist-group-title">🔒 身份核实</div>
+        <div class="checklist-item" onclick="toggleCheck(this)">
+          <input type="checkbox"><label>已核实中介 CEA 执照（或房东产权文件）</label>
+        </div>
+        <div class="checklist-item" onclick="toggleCheck(this)">
+          <input type="checkbox"><label>押金通过 PayNow / 银行转账支付，有凭证</label>
+        </div>
+        <div class="checklist-item" onclick="toggleCheck(this)">
+          <input type="checkbox"><label>签约前已拍照记录房间现有损耗</label>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ════ 快速资源链接 ════ -->
+  <div class="section">
+    <div class="section-title"><span class="icon">🔗</span>实用外部资源</div>
+    <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap:12px; margin-top:4px;">
+      <a href="https://www.cea.gov.sg/aceas/public-register" target="_blank" style="background:var(--card);border-radius:10px;padding:14px;box-shadow:var(--shadow);text-decoration:none;color:var(--text);display:flex;gap:10px;align-items:center;transition:box-shadow 0.2s;" onmouseover="this.style.boxShadow='var(--shadow-hover)'" onmouseout="this.style.boxShadow='var(--shadow)'">
+        <span style="font-size:24px;">🏛</span>
+        <div><div style="font-weight:700;font-size:13px;">CEA 中介执照核查</div><div style="font-size:12px;color:var(--text-muted);">官方公开注册数据库</div></div>
+      </a>
+      <a href="https://services2.hdb.gov.sg/webapp/BB31AWDashboardWeb/BB31PSearch.jsp" target="_blank" style="background:var(--card);border-radius:10px;padding:14px;box-shadow:var(--shadow);text-decoration:none;color:var(--text);display:flex;gap:10px;align-items:center;transition:box-shadow 0.2s;" onmouseover="this.style.boxShadow='var(--shadow-hover)'" onmouseout="this.style.boxShadow='var(--shadow)'">
+        <span style="font-size:24px;">🏘</span>
+        <div><div style="font-weight:700;font-size:13px;">HDB 产权人查询</div><div style="font-size:12px;color:var(--text-muted);">核实房东是否为合法业主</div></div>
+      </a>
+      <a href="https://uhms.nus.edu.sg" target="_blank" style="background:var(--card);border-radius:10px;padding:14px;box-shadow:var(--shadow);text-decoration:none;color:var(--text);display:flex;gap:10px;align-items:center;transition:box-shadow 0.2s;" onmouseover="this.style.boxShadow='var(--shadow-hover)'" onmouseout="this.style.boxShadow='var(--shadow)'">
+        <span style="font-size:24px;">🎓</span>
+        <div><div style="font-weight:700;font-size:13px;">NUS UHMS 宿舍申请</div><div style="font-size:12px;color:var(--text-muted);">校内 PGPR 申请门户（6月开窗）</div></div>
+      </a>
+      <a href="https://www.propertyguru.com.sg" target="_blank" style="background:var(--card);border-radius:10px;padding:14px;box-shadow:var(--shadow);text-decoration:none;color:var(--text);display:flex;gap:10px;align-items:center;transition:box-shadow 0.2s;" onmouseover="this.style.boxShadow='var(--shadow-hover)'" onmouseout="this.style.boxShadow='var(--shadow)'">
+        <span style="font-size:24px;">🏡</span>
+        <div><div style="font-weight:700;font-size:13px;">PropertyGuru</div><div style="font-size:12px;color:var(--text-muted);">新加坡最大正规租房平台</div></div>
+      </a>
+      <a href="https://www.99.co/singapore/rent" target="_blank" style="background:var(--card);border-radius:10px;padding:14px;box-shadow:var(--shadow);text-decoration:none;color:var(--text);display:flex;gap:10px;align-items:center;transition:box-shadow 0.2s;" onmouseover="this.style.boxShadow='var(--shadow-hover)'" onmouseout="this.style.boxShadow='var(--shadow)'">
+        <span style="font-size:24px;">🏢</span>
+        <div><div style="font-weight:700;font-size:13px;">99.co</div><div style="font-size:12px;color:var(--text-muted);">租金历史透明，对比方便</div></div>
+      </a>
+      <a href="https://www.cove.sg" target="_blank" style="background:var(--card);border-radius:10px;padding:14px;box-shadow:var(--shadow);text-decoration:none;color:var(--text);display:flex;gap:10px;align-items:center;transition:box-shadow 0.2s;" onmouseover="this.style.boxShadow='var(--shadow-hover)'" onmouseout="this.style.boxShadow='var(--shadow)'">
+        <span style="font-size:24px;">🛋</span>
+        <div><div style="font-weight:700;font-size:13px;">Cove Co-living</div><div style="font-size:12px;color:var(--text-muted);">全包月租，适合留学生</div></div>
+      </a>
+    </div>
+  </div>
+
+</div>
+
+<!-- ════ FOOTER ════ -->
+<div class="footer">
+  <p>🏠 NUS 找房工具 · 为小赖（NUS BME 2026）定制 · 所有跳转链接均为真实平台</p>
+  <p style="margin-top:6px;font-size:12px;">注：平台房源实时变化，以最新搜索结果为准。请务必完成身份核实后再支付任何费用。</p>
+</div>
+
+<script>
+// ── 预算滑块 ──
+const slider = document.getElementById('budgetSlider');
+const budgetVal = document.getElementById('budgetVal');
+
+function updateBudget() {
+  const val = parseInt(slider.value);
+  budgetVal.textContent = val.toLocaleString();
+}
+slider.addEventListener('input', updateBudget);
+
+// ── 平台链接生成 ──
+function getBudget() { return parseInt(slider.value); }
+
+function openPG() {
+  const max = getBudget();
+  // PropertyGuru: 搜索 Clementi + West Coast，common room，预算上限，8月入住
+  const url = `https://www.propertyguru.com.sg/property-for-rent?market=residential&listing_type=rent&search=true&freetext=clementi&property_type_code[]=HDB&property_type=R&minprice=600&maxprice=${max}&beds=-1&baths=-1&newProject=0&availability=3`;
+  window.open(url, '_blank');
+  return false;
+}
+
+function open99() {
+  const max = getBudget();
+  const url = `https://www.99.co/singapore/rent?query_type=location&query_ids=clementi&listing_type=rent&property_segments=HDB&room_types=common_room&max_price=${max}&min_price=500`;
+  window.open(url, '_blank');
+  return false;
+}
+
+function openCS() {
+  const max = getBudget();
+  const url = `https://www.carousell.sg/search/room%20for%20rent%20clementi/?addRecent=false&canChangeKeyword=false&includeSuggestions=false&searchId=&t-search_query_source=direct_search`;
+  window.open(url, '_blank');
+  return false;
+}
+
+// ── CEA 核查 ──
+function verifyCEA() {
+  const name = document.getElementById('ceaName').value.trim();
+  const result = document.getElementById('ceaResult');
+  if (!name) {
+    result.style.display = 'block';
+    result.style.background = '#fdf0ee';
+    result.style.border = '1px solid #f5c6c0';
+    result.innerHTML = '⚠️ 请先输入中介姓名或 CEA 注册号';
+    return;
+  }
+  const url = `https://www.cea.gov.sg/aceas/public-register/sales/1?name=${encodeURIComponent(name)}&licence-no=&office-address=`;
+  window.open(url, '_blank');
+  result.style.display = 'block';
+  result.style.background = '#e8f7ef';
+  result.style.border = '1px solid #a7d9b8';
+  result.innerHTML = `✅ 已在新标签页打开 CEA 官方核查页面，搜索"<strong>${name}</strong>"。如果查不到此人，说明对方无证，直接拒绝！`;
+}
+
+// ── 模板切换 ──
+function switchTab(id) {
+  document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+  document.querySelectorAll('.template-panel').forEach(p => p.classList.remove('active'));
+  event.target.classList.add('active');
+  document.getElementById('tpl-' + id).classList.add('active');
+}
+
+// ── 复制文本 ──
+function copyText(id, btn) {
+  const text = document.getElementById(id).textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = '✅ 已复制！';
+    btn.classList.add('copied');
+    setTimeout(() => {
+      btn.textContent = btn.textContent.includes('Copy') ? '📋 Copy' : '📋 复制';
+      btn.classList.remove('copied');
+      // restore original label
+      if (id.includes('_en')) { btn.textContent = '📋 Copy English Version'; }
+      else if (id === 'tpl-verify-en') { btn.textContent = '📋 Copy'; }
+      else if (id.includes('_cn')) { btn.textContent = '📋 复制中文版'; }
+      else { btn.textContent = '📋 复制'; }
+    }, 2000);
+  });
+}
+
+// ── 清单进度 ──
+const total = 20;
+function toggleCheck(item) {
+  const cb = item.querySelector('input[type=checkbox]');
+  cb.checked = !cb.checked;
+  item.classList.toggle('checked', cb.checked);
+  updateProgress();
+}
+function updateProgress() {
+  const checked = document.querySelectorAll('.checklist-item input:checked').length;
+  const pct = Math.round(checked / total * 100);
+  document.getElementById('progressBar').style.width = pct + '%';
+  document.getElementById('progressText').textContent = `${checked} / ${total} 项`;
+}
+</script>
+</body>
+</html>

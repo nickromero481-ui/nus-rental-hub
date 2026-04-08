@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NUS住房完全指南 2026 | 小赖专属版</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, 'PingFang SC', 'Helvetica Neue', sans-serif;
+    background: #f0f4f8;
+    color: #2d3748;
+    line-height: 1.7;
+  }
+  .hero {
+    background: linear-gradient(135deg, #003d82 0%, #0066cc 50%, #00a8e8 100%);
+    color: white;
+    padding: 48px 24px 40px;
+    text-align: center;
+  }
+  .hero h1 { font-size: 28px; font-weight: 700; margin-bottom: 8px; }
+  .hero p { font-size: 15px; opacity: 0.88; max-width: 560px; margin: 0 auto; }
+  .badge-row { display: flex; justify-content: center; gap: 12px; margin-top: 16px; flex-wrap: wrap; }
+  .badge {
+    background: rgba(255,255,255,0.18);
+    border: 1px solid rgba(255,255,255,0.35);
+    border-radius: 20px;
+    padding: 4px 14px;
+    font-size: 13px;
+  }
+  .container { max-width: 900px; margin: 0 auto; padding: 24px 16px; }
+
+  /* 摘要卡片 */
+  .summary-box {
+    background: linear-gradient(135deg, #ebf8ff, #e6fffa);
+    border: 1px solid #bee3f8;
+    border-radius: 14px;
+    padding: 22px 24px;
+    margin-bottom: 24px;
+  }
+  .summary-box h2 { font-size: 16px; color: #2b6cb0; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+  .summary-box p { font-size: 14px; color: #2d3748; }
+  .summary-box strong { color: #c05621; }
+
+  /* 区块 */
+  .section {
+    background: white;
+    border-radius: 14px;
+    padding: 24px;
+    margin-bottom: 20px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  }
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 18px;
+    padding-bottom: 14px;
+    border-bottom: 2px solid #ebf0f6;
+  }
+  .section-icon {
+    width: 36px; height: 36px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+  .icon-blue { background: #ebf8ff; }
+  .icon-green { background: #f0fff4; }
+  .icon-orange { background: #fffaf0; }
+  .icon-red { background: #fff5f5; }
+  .icon-purple { background: #faf5ff; }
+  .section-header h2 { font-size: 18px; color: #2d3748; font-weight: 700; }
+  .section-header span { font-size: 13px; color: #718096; margin-left: auto; }
+
+  /* 表格 */
+  table { width: 100%; border-collapse: collapse; font-size: 14px; margin: 14px 0; }
+  th {
+    background: #f7fafc;
+    padding: 10px 12px;
+    text-align: left;
+    font-weight: 600;
+    color: #4a5568;
+    border-bottom: 2px solid #e2e8f0;
+  }
+  td { padding: 10px 12px; border-bottom: 1px solid #edf2f7; vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: #f7fafc; }
+  .price { font-weight: 700; color: #276749; }
+  .price-high { font-weight: 700; color: #c05621; }
+
+  /* 选项卡片 */
+  .option-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px; margin: 16px 0; }
+  .option-card {
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 18px;
+    position: relative;
+    transition: border-color 0.2s;
+  }
+  .option-card.best { border-color: #48bb78; }
+  .option-card.good { border-color: #4299e1; }
+  .option-tag {
+    position: absolute;
+    top: -12px; left: 14px;
+    padding: 2px 10px;
+    border-radius: 10px;
+    font-size: 12px;
+    font-weight: 700;
+  }
+  .tag-best { background: #48bb78; color: white; }
+  .tag-good { background: #4299e1; color: white; }
+  .option-card h3 { font-size: 16px; margin-bottom: 6px; color: #2d3748; }
+  .option-card .price-big { font-size: 22px; font-weight: 800; color: #276749; }
+  .option-card .price-unit { font-size: 12px; color: #718096; }
+  .pros-cons { margin-top: 12px; font-size: 13px; }
+  .pros-cons p { padding: 2px 0; }
+  .pros-cons .pro::before { content: "✓ "; color: #48bb78; font-weight: 700; }
+  .pros-cons .con::before { content: "✗ "; color: #fc8181; font-weight: 700; }
+
+  /* 区域卡片 */
+  .area-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; margin: 16px 0; }
+  .area-card { border-radius: 12px; padding: 18px; border: 1px solid #e2e8f0; }
+  .area-card.top { border-left: 4px solid #f6ad55; }
+  .area-card.mid { border-left: 4px solid #68d391; }
+  .area-card.alt { border-left: 4px solid #90cdf4; }
+  .area-name { font-size: 16px; font-weight: 700; margin-bottom: 4px; }
+  .area-mrt { font-size: 12px; color: #718096; margin-bottom: 10px; }
+  .area-price { font-size: 14px; margin: 4px 0; }
+  .area-commute { font-size: 13px; color: #4a5568; margin-top: 8px; padding-top: 8px; border-top: 1px solid #edf2f7; }
+
+  /* 时间线 */
+  .timeline { position: relative; padding-left: 28px; }
+  .timeline::before { content: ''; position: absolute; left: 10px; top: 4px; bottom: 4px; width: 2px; background: #e2e8f0; }
+  .timeline-item { position: relative; margin-bottom: 20px; }
+  .timeline-item::before {
+    content: '';
+    position: absolute;
+    left: -22px; top: 4px;
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    background: #4299e1;
+    border: 2px solid white;
+    box-shadow: 0 0 0 2px #4299e1;
+  }
+  .timeline-item.urgent::before { background: #e53e3e; box-shadow: 0 0 0 2px #e53e3e; }
+  .timeline-date { font-size: 13px; font-weight: 700; color: #4299e1; margin-bottom: 6px; }
+  .timeline-item.urgent .timeline-date { color: #e53e3e; }
+  .timeline-tasks { font-size: 14px; }
+  .timeline-tasks li { list-style: none; padding: 3px 0; }
+  .timeline-tasks li::before { content: "□ "; color: #a0aec0; }
+  .timeline-tasks li.important::before { content: "⚠️ "; }
+
+  /* 警告框 */
+  .alert {
+    border-radius: 10px;
+    padding: 14px 18px;
+    margin: 16px 0;
+    font-size: 14px;
+  }
+  .alert-warning { background: #fffbeb; border: 1px solid #f6e05e; }
+  .alert-warning strong { color: #b7791f; }
+  .alert-info { background: #ebf8ff; border: 1px solid #90cdf4; }
+  .alert-info strong { color: #2b6cb0; }
+  .alert-danger { background: #fff5f5; border: 1px solid #feb2b2; }
+  .alert-danger strong { color: #c53030; }
+
+  /* 资源链接 */
+  .link-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin: 14px 0; }
+  .link-card {
+    background: #f7fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 12px 14px;
+    font-size: 13px;
+  }
+  .link-card a { color: #3182ce; text-decoration: none; display: block; font-weight: 600; margin-bottom: 2px; }
+  .link-card a:hover { text-decoration: underline; }
+  .link-card p { color: #718096; font-size: 12px; }
+
+  /* 总结 */
+  .conclusion {
+    background: linear-gradient(135deg, #1a365d, #2b6cb0);
+    color: white;
+    border-radius: 14px;
+    padding: 24px;
+    margin-bottom: 24px;
+  }
+  .conclusion h2 { font-size: 18px; margin-bottom: 14px; opacity: 0.9; }
+  .conclusion-step { display: flex; gap: 14px; margin-bottom: 14px; }
+  .step-num {
+    width: 28px; height: 28px; flex-shrink: 0;
+    background: rgba(255,255,255,0.2);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; font-weight: 700;
+  }
+  .step-text { font-size: 14px; line-height: 1.6; opacity: 0.92; }
+  .step-text strong { color: #fbd38d; }
+
+  footer { text-align: center; color: #a0aec0; font-size: 12px; padding: 16px; }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <h1>NUS住房完全指南</h1>
+  <p>专为小赖量身定制 · 2026年8月入学 · 生物医学工程硕士（授课制1年）</p>
+  <div class="badge-row">
+    <span class="badge">预算：学生平均水平</span>
+    <span class="badge">目标：靠近NUS肯特岗校区</span>
+    <span class="badge">国际学生</span>
+    <span class="badge">更新于2026年3月</span>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- 执行摘要 -->
+  <div class="summary-box">
+    <h2>📋 核心结论（先看这里）</h2>
+    <p>最优策略：<strong>首先全力申请校内PGPR宿舍</strong>（月均约S$200-280，价格极低），同时并行在<strong>Clementi区域物色校外合租房</strong>（月均S$800-1,100）作为备选。申请PGPR的窗口仅几天，需在<strong>2026年6月初上午10:00准时提交</strong>。</p>
+  </div>
+
+  <!-- 校内宿舍 -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon icon-blue">🏠</div>
+      <h2>校内宿舍（强烈优先推荐）</h2>
+      <span>研究生可申请</span>
+    </div>
+
+    <div class="option-grid">
+      <div class="option-card best">
+        <div class="option-tag tag-best">★ 首选</div>
+        <h3>PGPR（王子公园宿舍）</h3>
+        <div class="price-big">S$202–284</div>
+        <div class="price-unit">/月（国际生·自费标准·单人间）</div>
+        <div class="pros-cons">
+          <p class="pro">价格全场最低</p>
+          <p class="pro">校车5-15分钟到各学院</p>
+          <p class="pro">含水电、WiFi、食堂</p>
+          <p class="pro">健身房、洗衣房、厨房齐全</p>
+          <p class="con">竞争激烈，名额有限</p>
+          <p class="con">空调费另计</p>
+        </div>
+      </div>
+      <div class="option-card good">
+        <div class="option-tag tag-good">备选</div>
+        <h3>UTown Residence</h3>
+        <div class="price-big">S$254–383</div>
+        <div class="price-unit">/月（国际生·自费标准·单人间）</div>
+        <div class="pros-cons">
+          <p class="pro">设施现代，社交氛围浓厚</p>
+          <p class="pro">UTown商业区近在咫尺</p>
+          <p class="con">价格高于PGPR</p>
+          <p class="con">靠近广场，较喧闹</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="alert alert-warning">
+      <strong>⚠️ 补贴资格提示：</strong> 如果小赖所在课程享受MOE教育部补贴，单人间月租可低至S$134-189；如属自费课程，则为S$202-284。建议入学前联系NUS生物医学工程系确认。国际学生通常按自费标准计。
+    </div>
+
+    <h3 style="font-size:15px; margin:18px 0 12px; color:#2d3748;">申请关键信息</h3>
+    <table>
+      <tr><th>项目</th><th>详情</th></tr>
+      <tr><td>申请入口</td><td><a href="https://uhms.nus.edu.sg/StudentPortal" target="_blank" style="color:#3182ce">uhms.nus.edu.sg/StudentPortal</a></td></tr>
+      <tr><td>申请窗口</td><td>预计<strong>2026年6月上旬</strong>（参考2025年：6月11日），开放时间上午10:00</td></tr>
+      <tr><td>申请费</td><td>S$27.25（含税，<strong>不可退还</strong>，付款后不可修改）</td></tr>
+      <tr><td>接受押金</td><td>S$200</td></tr>
+      <tr><td>偏好排序建议</td><td>① PGPR单人间 → ② PGPR双人间 → ③ UTown双人间</td></tr>
+      <tr><td>支付方式</td><td>信用卡/借记卡/支付宝（不支持现金）</td></tr>
+    </table>
+
+    <div class="alert alert-danger">
+      <strong>🚨 申请日提醒：</strong> 宿舍名额严重供不应求！请在申请日当天上午<strong>09:50进入守候状态，10:00立即登录提交</strong>。晚几分钟可能全部被抢空。同时务必准备好校外备选方案。
+    </div>
+  </div>
+
+  <!-- 校外租房 -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon icon-green">🗺️</div>
+      <h2>校外租房（宿舍备选方案）</h2>
+      <span>宿舍失败必看</span>
+    </div>
+
+    <div class="area-cards">
+      <div class="area-card top">
+        <div class="area-name">★ Clementi（金文泰）</div>
+        <div class="area-mrt">MRT: EW23 · 最推荐</div>
+        <div class="area-price"><span class="price">S$800–1,100/月</span> · 普通房</div>
+        <div class="area-price" style="color:#718096">S$1,200–1,400/月 · 主卧（独卫）</div>
+        <div class="area-commute">
+          🚌 96路公交 → NUS，约<strong>22分钟</strong>，票价S$1.19<br>
+          🛒 Clementi Mall、NTUC超市、多个食阁<br>
+          🏘️ 房源充足，性价比最高
+        </div>
+      </div>
+      <div class="area-card mid">
+        <div class="area-name">Dover / Buona Vista</div>
+        <div class="area-mrt">MRT: EW22 / CC22 · 次推荐</div>
+        <div class="area-price"><span class="price">S$1,000–1,350/月</span> · 普通房</div>
+        <div class="area-price" style="color:#718096">S$1,200–1,500/月 · 主卧</div>
+        <div class="area-commute">
+          🚶 步行约20分钟可达NUS部分区域<br>
+          🚌 公交约10分钟<br>
+          🏢 靠近One-North商业区，生活便利
+        </div>
+      </div>
+      <div class="area-card alt">
+        <div class="area-name">West Coast / Pasir Panjang</div>
+        <div class="area-mrt">MRT: CC26 · 经济备选</div>
+        <div class="area-price"><span class="price">S$900–1,200/月</span> · 普通房</div>
+        <div class="area-price" style="color:#718096">S$1,100–1,300/月 · 主卧</div>
+        <div class="area-commute">
+          🚌 公交约15-20分钟<br>
+          🌿 靠近西海岸公园，环境安静<br>
+          💰 价格适中，但生活配套稍少
+        </div>
+      </div>
+    </div>
+
+    <div class="alert alert-info">
+      <strong>💡 省钱技巧：</strong> 2月是新加坡租房淡季，租金比旺季低5-10%。若宿舍申请失败后在6月找房，此时仍是相对合理的价格区间。可通过Carousell找个人房东直租，省去中介费（约0.5-1个月租金）。
+    </div>
+  </div>
+
+  <!-- 费用对比 -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon icon-orange">💰</div>
+      <h2>全方位费用对比</h2>
+    </div>
+    <table>
+      <tr>
+        <th>住宿方式</th>
+        <th>月均费用（新元）</th>
+        <th>优势</th>
+        <th>风险</th>
+      </tr>
+      <tr>
+        <td><strong>PGPR校内（国际生）</strong></td>
+        <td class="price">S$202–284</td>
+        <td>极便宜、全包、通勤5-15分钟</td>
+        <td>竞争激烈，可能申请失败</td>
+      </tr>
+      <tr>
+        <td><strong>UTown校内（国际生）</strong></td>
+        <td class="price">S$254–383</td>
+        <td>现代设施、好地段</td>
+        <td>比PGPR贵、更吵</td>
+      </tr>
+      <tr>
+        <td><strong>Clementi HDB普通房</strong></td>
+        <td class="price">S$800–1,100</td>
+        <td>稳定实惠、生活配套完善</td>
+        <td>通勤约22分钟</td>
+      </tr>
+      <tr>
+        <td><strong>Dover/Buona Vista普通房</strong></td>
+        <td class="price">S$1,000–1,350</td>
+        <td>离NUS近、可步行</td>
+        <td>价格偏高</td>
+      </tr>
+      <tr>
+        <td><strong>Co-living（如Cove）</strong></td>
+        <td class="price-high">S$1,800–2,500</td>
+        <td>全包灵活、拎包入住</td>
+        <td>贵，不适合预算有限的学生</td>
+      </tr>
+    </table>
+
+    <h3 style="font-size:14px; margin:18px 0 10px; color:#4a5568;">每月总生活预算估算（含住宿）：</h3>
+    <table>
+      <tr><th>方案</th><th>住宿</th><th>三餐</th><th>交通</th><th>其他</th><th>合计</th></tr>
+      <tr>
+        <td>住PGPR校内</td>
+        <td class="price">S$250</td>
+        <td>S$400</td>
+        <td>S$50</td>
+        <td>S$300</td>
+        <td><strong>≈S$1,000–1,200</strong></td>
+      </tr>
+      <tr>
+        <td>住Clementi校外</td>
+        <td class="price">S$900</td>
+        <td>S$400</td>
+        <td>S$100</td>
+        <td>S$300</td>
+        <td><strong>≈S$1,700–2,000</strong></td>
+      </tr>
+    </table>
+  </div>
+
+  <!-- 防诈骗 -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon icon-red">🔒</div>
+      <h2>防诈骗指南（重要！）</h2>
+      <span>外国学生是高危群体</span>
+    </div>
+    <table>
+      <tr>
+        <th>步骤</th>
+        <th>具体操作</th>
+      </tr>
+      <tr>
+        <td>① 验证经纪人</td>
+        <td>在 <a href="https://www.cea.gov.sg" target="_blank" style="color:#3182ce">CEA Public Register</a> 输入对方电话号码，查不到 = 骗子，立即停止联系</td>
+      </tr>
+      <tr>
+        <td>② 免费看房</td>
+        <td>看房不需要任何费用。"付费看房"= 骗局，直接拒绝</td>
+      </tr>
+      <tr>
+        <td>③ 安全支付</td>
+        <td>租金/押金仅转账给<strong>房东本人</strong>，保留银行转账截图</td>
+      </tr>
+      <tr>
+        <td>④ 警惕话术</td>
+        <td>"限时优惠""多人排队""先付定金占房"= 经典骗局话术</td>
+      </tr>
+      <tr>
+        <td>⑤ 实地看房</td>
+        <td>只发照片不让看房的房源不要租</td>
+      </tr>
+    </table>
+  </div>
+
+  <!-- 行动计划 -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon icon-purple">📅</div>
+      <h2>行动计划与时间表</h2>
+    </div>
+
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="timeline-date">现在（2026年3月）</div>
+        <ul class="timeline-tasks">
+          <li>收藏UHMS申请系统：<a href="https://uhms.nus.edu.sg/StudentPortal" target="_blank" style="color:#3182ce">uhms.nus.edu.sg</a></li>
+          <li>找到NUS学号或Application Number</li>
+          <li>联系BME系确认是否享受MOE补贴（影响宿舍价格）</li>
+          <li>开始在PropertyGuru/99.co浏览Clementi区域行情</li>
+        </ul>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-date">2026年5月</div>
+        <ul class="timeline-tasks">
+          <li>密切关注NUS官方邮件（宿舍申请通知）</li>
+          <li>准备好信用卡/借记卡（用于支付申请费）</li>
+          <li>在PropertyGuru/99.co筛选3-5套备选校外房源</li>
+        </ul>
+      </div>
+      <div class="timeline-item urgent">
+        <div class="timeline-date">⚡ 2026年6月初（申请日 — 最关键！）</div>
+        <ul class="timeline-tasks">
+          <li class="important">09:50守候，10:00立即登录UHMS系统</li>
+          <li class="important">提交宿舍申请（偏好：PGPR单 → PGPR双 → UTown双）</li>
+          <li>支付S$27.25申请费，截图保存确认邮件</li>
+          <li>如名额已满，立即启动校外找房</li>
+        </ul>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-date">2026年6月-7月</div>
+        <ul class="timeline-tasks">
+          <li>等待宿舍结果（通常2-4周）</li>
+          <li>校外看房：在Clementi/Dover实地看3-5套</li>
+          <li>签租约前：CEA验证经纪人，确认含Diplomatic Clause</li>
+          <li>支付押金（通常1个月租金）</li>
+        </ul>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-date">2026年7月底-8月初</div>
+        <ul class="timeline-tasks">
+          <li>确认入住时间（宿舍/校外）</li>
+          <li>安排行李托运/快递到新加坡</li>
+          <li>提前2-3天抵达，办理入住手续</li>
+          <li>下载NUS NextBus App（实时查校车）</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- 实用资源 -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon icon-blue">🔗</div>
+      <h2>实用资源汇总</h2>
+    </div>
+    <div class="link-grid">
+      <div class="link-card">
+        <a href="https://uhms.nus.edu.sg/StudentPortal" target="_blank">UHMS宿舍申请入口</a>
+        <p>NUS宿舍统一申请系统</p>
+      </div>
+      <div class="link-card">
+        <a href="https://pgpr.nus.edu.sg" target="_blank">PGPR官网</a>
+        <p>设施介绍、房型详情</p>
+      </div>
+      <div class="link-card">
+        <a href="https://osa.nus.edu.sg/accommodation/hostel-application/application-guide-graduate/" target="_blank">OSA研究生申请指南</a>
+        <p>官方申请说明</p>
+      </div>
+      <div class="link-card">
+        <a href="https://www.propertyguru.com.sg/hdb-for-rent/in-clementi/room-rental" target="_blank">PropertyGuru - Clementi</a>
+        <p>最大租房平台</p>
+      </div>
+      <div class="link-card">
+        <a href="https://www.99.co/singapore/rent/rooms/clementi" target="_blank">99.co - Clementi</a>
+        <p>另一主流租房平台</p>
+      </div>
+      <div class="link-card">
+        <a href="https://www.cea.gov.sg" target="_blank">CEA经纪人验证</a>
+        <p>防诈骗核心工具</p>
+      </div>
+      <div class="link-card">
+        <a href="https://bus.hewliyang.com/stop/PGPR" target="_blank">NUS NextBus</a>
+        <p>校车实时查询</p>
+      </div>
+      <div class="link-card">
+        <a href="https://www.carousell.sg/property/room-rentals/clementi-hdb/" target="_blank">Carousell租房</a>
+        <p>个人房东直租（可省中介费）</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 结论 -->
+  <div class="conclusion">
+    <h2>最终建议总结</h2>
+    <div class="conclusion-step">
+      <div class="step-num">1</div>
+      <div class="step-text">
+        <strong>立即备战宿舍申请</strong>：记好2026年6月的申请时间，准备好UHMS账号和信用卡，在开放的第一分钟提交申请（偏好排序：PGPR单间 > PGPR双人间 > UTown双人间）。
+      </div>
+    </div>
+    <div class="conclusion-step">
+      <div class="step-num">2</div>
+      <div class="step-text">
+        <strong>并行准备校外方案</strong>：现在就开始在PropertyGuru/99.co浏览Clementi区域HDB普通房，了解行情，标记心仪房源。宿舍失败时可以快速行动。
+      </div>
+    </div>
+    <div class="conclusion-step">
+      <div class="step-num">3</div>
+      <div class="step-text">
+        <strong>确认补贴资格</strong>：联系NUS生物医学工程系，确认课程是否享受MOE补贴。如享受补贴，校内宿舍费用将下降约40%，差距巨大。
+      </div>
+    </div>
+    <div class="conclusion-step">
+      <div class="step-num">4</div>
+      <div class="step-text">
+        <strong>防诈骗意识前置</strong>：每次接触房源都在CEA官网验证经纪人电话，坚持免费看房原则，绝不用现金支付押金。新加坡租房诈骗近年大幅上升，外国学生是主要目标。
+      </div>
+    </div>
+  </div>
+
+</div>
+<footer>本报告基于2025-2026年市场数据整理 · 实际价格以NUS官网及市场行情为准 · 为小赖定制 by Nova</footer>
+</body>
+</html>
