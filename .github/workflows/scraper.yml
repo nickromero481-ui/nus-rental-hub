@@ -1,0 +1,37 @@
+name: Scrape Rental Listings
+
+on:
+  schedule:
+    # Run at 10:00 and 22:00 Singapore time (UTC+8)
+    - cron: '0 2,14 * * *'
+  workflow_dispatch:  # Allow manual trigger
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+    
+    - name: Install dependencies
+      run: |
+        pip install requests beautifulsoup4 lxml
+    
+    - name: Run scraper
+      run: |
+        python scripts/scraper.py
+    
+    - name: Commit and push if changed
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add data/
+        git diff --staged --quiet || (git commit -m "Update rental listings [$(date +'%Y-%m-%d %H:%M')]" && git push)
