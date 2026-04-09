@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NUS智能租房助手 - 自动分析+避坑指南</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;background:#0f172a;color:#e2e8f0;line-height:1.7}
+.container{max-width:900px;margin:0 auto;padding:20px}
+.hero{background:linear-gradient(135deg,#1e3a5f 0%,#0f172a 50%,#1a1a2e 100%);border-radius:20px;padding:40px 30px;text-align:center;margin-bottom:30px}
+.hero h1{font-size:2em;margin-bottom:10px}
+.hero h1 span{background:linear-gradient(90deg,#38bdf8,#f472b6);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hero p{color:#94a3b8}
+
+.section{background:#1e293b;border-radius:20px;padding:28px;margin-bottom:24px;border:1px solid #334155}
+.section h2{font-size:1.3em;margin-bottom:18px;display:flex;align-items:center;gap:10px;color:#38bdf8}
+
+.input-group{margin-bottom:20px}
+.input-group label{display:block;margin-bottom:8px;color:#94a3b8;font-size:0.9em}
+.input-group textarea,.input-group input{width:100%;padding:12px 16px;background:#0f172a;border:1px solid #334155;border-radius:12px;color:#e2e8f0;font-size:1em;resize:vertical}
+.input-group textarea{min-height:120px}
+.input-group textarea:focus,.input-group input:focus{outline:none;border-color:#38bdf8}
+
+.btn{background:linear-gradient(135deg,#38bdf8,#818cf8);color:#0f172a;border:none;padding:14px 32px;border-radius:12px;font-size:1em;font-weight:600;cursor:pointer;transition:all .3s}
+.btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(56,189,248,0.3)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+
+.result-card{background:#0f172a;border-radius:16px;padding:20px;margin-bottom:16px;border:1px solid #334155}
+.result-card h3{font-size:1.1em;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+
+.match-score{font-size:3em;font-weight:700;text-align:center;margin:20px 0}
+.match-score.high{color:#22c55e}
+.match-score.medium{color:#fbbf24}
+.match-score.low{color:#ef4444}
+
+.checklist-item{display:flex;align-items:flex-start;gap:12px;padding:12px;background:#0f172a;border-radius:10px;margin-bottom:10px;border:1px solid #334155}
+.checklist-item input[type="checkbox"]{width:20px;height:20px;margin-top:2px;accent-color:#38bdf8}
+.checklist-item label{flex:1;cursor:pointer}
+.checklist-item.important{border-color:#f472b6;background:rgba(244,114,182,0.05)}
+.checklist-item.warning{border-color:#fbbf24;background:rgba(251,191,36,0.05)}
+
+.tag{display:inline-block;padding:4px 12px;border-radius:20px;font-size:0.85em;margin:4px}
+.tag.yes{background:rgba(34,197,94,0.15);color:#22c55e;border:1px solid rgba(34,197,94,0.3)}
+.tag.no{background:rgba(239,68,68,0.15);color:#ef4444;border:1px solid rgba(239,68,68,0.3)}
+.tag.unknown{background:rgba(148,163,184,0.15);color:#94a3b8;border:1px solid rgba(148,163,184,0.3)}
+
+.analysis-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px;margin-top:20px}
+.analysis-item{background:#0f172a;border-radius:12px;padding:16px;border:1px solid #334155}
+.analysis-item h4{color:#38bdf8;margin-bottom:8px;font-size:0.95em}
+.analysis-item p{color:#94a3b8;font-size:0.9em}
+
+.nav{position:fixed;top:20px;right:20px;z-index:100}
+.nav a{display:block;background:#1e293b;color:#38bdf8;padding:10px 16px;border-radius:10px;text-decoration:none;margin-bottom:8px;border:1px solid #334155;font-size:0.9em}
+.nav a:hover{background:#334155}
+
+.hidden{display:none}
+
+.warning-box{background:rgba(251,191,36,0.1);border:1px solid #fbbf24;border-radius:12px;padding:16px;margin-bottom:20px}
+.warning-box h4{color:#fbbf24;margin-bottom:8px}
+.warning-box ul{margin-left:20px;color:#94a3b8}
+.warning-box li{margin-bottom:6px}
+
+@media(max-width:768px){
+.container{padding:15px}
+.hero{padding:30px 20px}
+.nav{position:static;margin-bottom:20px;display:flex;flex-wrap:wrap;gap:8px}
+.nav a{margin-bottom:0}
+}
+</style>
+</head>
+<body>
+<div class="nav">
+<a href="index.html">🏠 首页</a>
+<a href="xiaohongshu-listings.html">📕 小红书房源</a>
+<a href="rental-assistant.html">🤖 租房助手</a>
+</div>
+
+<div class="container">
+<div class="hero">
+<h1>NUS智能<span>租房助手</span></h1>
+<p>粘贴房源信息，自动分析是否符合要求 + 生成避坑问题清单</p>
+</div>
+
+<div class="section">
+<h2>📝 粘贴房源信息</h2>
+<div class="input-group">
+<label>把房东/中介发的房源信息完整粘贴到这里（支持微信聊天记录、小红书帖子、网页文案等）</label>
+<textarea id="listingInput" placeholder="例如：
+Clementi普通房出租，月租$900，步行5分钟到Clementi MRT，到NUS 15分钟公交。
+包水电网，可煮，有空调，限女生，和房东同住，随时入住。
+联系WhatsApp: 9123 4567"></textarea>
+</div>
+<div style="display:flex;gap:12px;flex-wrap:wrap">
+<button class="btn" onclick="analyzeListing()">🔍 分析房源</button>
+<button class="btn" onclick="clearAll()" style="background:#334155;color:#e2e8f0">清空</button>
+</div>
+</div>
+
+<div id="analysisResult" class="hidden">
+<div class="section">
+<h2>📊 匹配度分析</h2>
+<div id="matchScore" class="match-score">--</div>
+<div id="matchTags" style="text-align:center;margin-bottom:20px"></div>
+<div class="analysis-grid" id="analysisGrid"></div>
+</div>
+
+<div class="section">
+<h2>⚠️ 风险提示</h2>
+<div id="riskWarnings"></div>
+</div>
+
+<div class="section">
+<h2>❓ 必问问题清单（联系房东前必看）</h2>
+<div id="questionChecklist"></div>
+</div>
+
+<div class="section">
+<h2>💬 联系房东话术模板</h2>
+<div class="result-card">
+<p style="color:#94a3b8;margin-bottom:12px">复制以下模板，根据实际情况修改：</p>
+<textarea id="messageTemplate" style="width:100%;min-height:200px;background:#0f172a;border:1px solid #334155;border-radius:10px;padding:16px;color:#e2e8f0;font-size:0.95em" readonly></textarea>
+<button class="btn" onclick="copyTemplate()" style="margin-top:12px">📋 复制话术</button>
+</div>
+</div>
+</div>
+</div>
+
+<script>
+// 用户要求配置
+const USER_REQUIREMENTS = {
+    maxBudget: 1500,
+    maxCommuteMinutes: 30,
+    cookingRequired: true,
+    bathroomRequired: true,
+    safetyRequired: true,
+    femaleOnly: true,
+    noLandlord: true,
+    femaleRoommatesOnly: true
+};
+
+// 关键词库
+const KEYWORDS = {
+    location: ['clementi', '金文泰', 'nus', 'kent ridge', '金文泰', 'clementi', 'west coast', 'pasir panjang', 'dover', 'buona vista'],
+    price: ['$', 'sgd', '新币', '月租', 'rent', 'per month', '/月'],
+    cooking: ['可煮', '可小煮', 'light cooking', 'cooking allowed', '煮', '厨房'],
+    noCooking: ['不可煮', 'no cooking', '不可煮食'],
+    femaleOnly: ['限女生', 'female only', '女生 only', 'ladies only', 'girls only', '女租客'],
+    noLandlord: ['无房东', 'no landlord', '房东不同住', 'landlord not staying', 'whole unit', '整租'],
+    withLandlord: ['和房东同住', 'landlord staying', 'owner staying', '与房东'],
+    bathroom: ['独立卫生间', 'private bathroom', '独卫', 'attached bathroom', 'ensuite', '洗手间'],
+    sharedBathroom: ['共用卫生间', 'shared bathroom', 'common bathroom'],
+    mrt: ['mrt', '地铁', 'station', '步行', 'walk', 'bus', '公交'],
+    ac: ['空调', 'aircon', 'ac', '冷气'],
+    wifi: ['wifi', '网络', 'internet', '包网'],
+    utilities: ['包水电', 'utilities included', '水电网', '包水电网']
+};
+
+function analyzeListing() {
+    const input = document.getElementById('listingInput').value.toLowerCase();
+    if (!input.trim()) {
+        alert('请先粘贴房源信息');
+        return;
+    }
+    
+    const analysis = {
+        price: extractPrice(input),
+        location: extractLocation(input),
+        commute: estimateCommute(input),
+        cooking: checkCooking(input),
+        bathroom: checkBathroom(input),
+        femaleOnly: checkFemaleOnly(input),
+        landlord: checkLandlord(input),
+        ac: checkAC(input),
+        wifi: checkWiFi(input),
+        utilities: checkUtilities(input)
+    };
+    
+    displayAnalysis(analysis);
+    generateChecklist(analysis);
+    generateMessageTemplate(analysis);
+}
+
+function extractPrice(text) {
+    const patterns = [
+        /\$\s*(\d{3,4})/i,
+        /(\d{3,4})\s*\$/i,
+        /月租\s*[:：]?\s*\$?\s*(\d{3,4})/i,
+        /rent\s*[:：]?\s*\$?\s*(\d{3,4})/i,
+        /(\d{3,4})\s*(?:sgd|新币)/i
+    ];
+    
+    for (let pattern of patterns) {
+        const match = text.match(pattern);
+        if (match) return parseInt(match[1]);
+    }
+    return null;
+}
+
+function extractLocation(text) {
+    const locations = [];
+    KEYWORDS.location.forEach(loc => {
+        if (text.includes(loc.toLowerCase())) locations.push(loc);
+    });
+    return locations.length > 0 ? locations : ['未明确'];
+}
+
+function estimateCommute(text) {
+    // 提取通勤时间
+    const patterns = [
+        /(\d+)\s*分钟.*nus/i,
+        /(\d+)\s*min.*nus/i,
+        /nus.*(\d+)\s*分钟/i,
+        /nus.*(\d+)\s*min/i,
+        /到nus.*(\d+)/i,
+        /到工学院.*(\d+)/i
+    ];
+    
+    for (let pattern of patterns) {
+        const match = text.match(pattern);
+        if (match) return parseInt(match[1]);
+    }
+    
+    // 根据位置估算
+    if (text.includes('clementi') || text.includes('金文泰')) return 10;
+    if (text.includes('west coast') || text.includes('西海岸')) return 15;
+    if (text.includes('pasir panjang')) return 20;
+    
+    return null;
+}
+
+function checkCooking(text) {
+    if (KEYWORDS.noCooking.some(k => text.includes(k))) return false;
+    if (KEYWORDS.cooking.some(k => text.includes(k))) return true;
+    return null;
+}
+
+function checkBathroom(text) {
+    if (KEYWORDS.bathroom.some(k => text.includes(k))) return 'private';
+    if (KEYWORDS.sharedBathroom.some(k => text.includes(k))) return 'shared';
+    return null;
+}
+
+function checkFemaleOnly(text) {
+    return KEYWORDS.femaleOnly.some(k => text.includes(k));
+}
+
+function checkLandlord(text) {
+    if (KEYWORDS.withLandlord.some(k => text.includes(k))) return 'staying';
+    if (KEYWORDS.noLandlord.some(k => text.includes(k))) return 'not_staying';
+    return null;
+}
+
+function checkAC(text) {
+    return KEYWORDS.ac.some(k => text.includes(k));
+}
+
+function checkWiFi(text) {
+    return KEYWORDS.wifi.some(k => text.includes(k));
+}
+
+function checkUtilities(text) {
+    return KEYWORDS.utilities.some(k => text.includes(k));
+}
+
+function calculateMatchScore(analysis) {
+    let score = 0;
+    let maxScore = 0;
+    
+    // 价格 (25分)
+    maxScore += 25;
+    if (analysis.price && analysis.price <= USER_REQUIREMENTS.maxBudget) score += 25;
+    else if (analysis.price && analysis.price <= USER_REQUIREMENTS.maxBudget + 100) score += 15;
+    
+    // 通勤 (25分)
+    maxScore += 25;
+    if (analysis.commute && analysis.commute <= USER_REQUIREMENTS.maxCommuteMinutes) score += 25;
+    else if (analysis.commute && analysis.commute <= USER_REQUIREMENTS.maxCommuteMinutes + 10) score += 15;
+    
+    // 可煮饭 (15分)
+    maxScore += 15;
+    if (analysis.cooking === true) score += 15;
+    
+    // 女生入住 (15分)
+    maxScore += 15;
+    if (analysis.femaleOnly) score += 15;
+    
+    // 无房东 (10分)
+    maxScore += 10;
+    if (analysis.landlord === 'not_staying') score += 10;
+    
+    // 卫生间 (10分)
+    maxScore += 10;
+    if (analysis.bathroom === 'private') score += 10;
+    else if (analysis.bathroom === 'shared') score += 5;
+    
+    return Math.round((score / maxScore) * 100);
+}
+
+function displayAnalysis(analysis) {
+    const score = calculateMatchScore(analysis);
+    const scoreEl = document.getElementById('matchScore');
+    scoreEl.textContent = score + '%';
+    scoreEl.className = 'match-score ' + (score >= 80 ? 'high' : score >= 60 ? 'medium' : 'low');
+    
+    // 标签
+    const tagsHtml = [];
+    if (analysis.price) {
+        const priceOk = analysis.price <= USER_REQUIREMENTS.maxBudget;
+        tagsHtml.push(`<span class="tag ${priceOk ? 'yes' : 'no'}">价格: $${analysis.price}${priceOk ? ' ✓' : ' ✗'}</span>`);
+    }
+    if (analysis.commute) {
+        const commuteOk = analysis.commute <= USER_REQUIREMENTS.maxCommuteMinutes;
+        tagsHtml.push(`<span class="tag ${commuteOk ? 'yes' : 'no'}">通勤: ${analysis.commute}分钟${commuteOk ? ' ✓' : ' ✗'}</span>`);
+    }
+    if (analysis.cooking !== null) {
+        tagsHtml.push(`<span class="tag ${analysis.cooking ? 'yes' : 'no'}">可煮饭${analysis.cooking ? ' ✓' : ' ✗'}</span>`);
+    }
+    if (analysis.femaleOnly) {
+        tagsHtml.push(`<span class="tag yes">限女生 ✓</span>`);
+    }
+    if (analysis.landlord) {
+        const noLandlord = analysis.landlord === 'not_staying';
+        tagsHtml.push(`<span class="tag ${noLandlord ? 'yes' : 'no'}">${noLandlord ? '无房东 ✓' : '有房东 ✗'}</span>`);
+    }
+    if (analysis.bathroom) {
+        const hasPrivate = analysis.bathroom === 'private';
+        tagsHtml.push(`<span class="tag ${hasPrivate ? 'yes' : 'unknown'}">${hasPrivate ? '独卫 ✓' : '共用卫生间'}</span>`);
+    }
+    
+    document.getElementById('matchTags').innerHTML = tagsHtml.join('');
+    
+    // 详细分析
+    const gridHtml = [];
+    gridHtml.push(`<div class="analysis-item"><h4>📍 位置</h4><p>${analysis.location.join(', ')}</p></div>`);
+    gridHtml.push(`<div class="analysis-item"><h4>💰 租金</h4><p>${analysis.price ? '$' + analysis.price + '/月' : '未检测到'}</p></div>`);
+    gridHtml.push(`<div class="analysis-item"><h4>🚌 通勤</h4><p>${analysis.commute ? '约' + analysis.commute + '分钟到NUS' : '未明确'}</p></div>`);
+    gridHtml.push(`<div class="analysis-item"><h4>🍳 煮饭</h4><p>${analysis.cooking === null ? '未明确' : analysis.cooking ? '可煮 ✓' : '不可煮 ✗'}</p></div>`);
+    gridHtml.push(`<div class="analysis-item"><h4>🚿 卫生间</h4><p>${analysis.bathroom === 'private' ? '独立卫生间 ✓' : analysis.bathroom === 'shared' ? '共用卫生间' : '未明确'}</p></div>`);
+    gridHtml.push(`<div class="analysis-item"><h4>👥 房东</h4><p>${analysis.landlord === 'not_staying' ? '不同住 ✓' : analysis.landlord === 'staying' ? '和房东同住 ⚠️' : '未明确'}</p></div>`);
+    gridHtml.push(`<div class="analysis-item"><h4>❄️ 空调</h4><p>${analysis.ac ? '有 ✓' : '未提及'}</p></div>`);
+    gridHtml.push(`<div class="analysis-item"><h4>📶 网络</h4><p>${analysis.wifi ? '有 ✓' : '未提及'}</p></div>`);
+    
+    document.getElementById('analysisGrid').innerHTML = gridHtml.join('');
+    
+    // 风险提示
+    const warnings = [];
+    if (analysis.price && analysis.price > USER_REQUIREMENTS.maxBudget) {
+        warnings.push(`<li>租金 $${analysis.price} 超出预算 $${USER_REQUIREMENTS.maxBudget}</li>`);
+    }
+    if (analysis.commute && analysis.commute > USER_REQUIREMENTS.maxCommuteMinutes) {
+        warnings.push(`<li>通勤 ${analysis.commute}分钟 超过要求 ${USER_REQUIREMENTS.maxCommuteMinutes}分钟</li>`);
+    }
+    if (analysis.cooking === false) {
+        warnings.push(`<li>不可煮饭 - 不符合你的要求</li>`);
+    }
+    if (analysis.landlord === 'staying') {
+        warnings.push(`<li>和房东同住 - 不符合你的要求</li>`);
+    }
+    if (!analysis.femaleOnly) {
+        warnings.push(`<li>未明确说明限女生 - 需要确认</li>`);
+    }
+    if (!analysis.price) warnings.push(`<li>未检测到租金信息 - 务必确认</li>`);
+    if (!analysis.commute) warnings.push(`<li>未明确通勤时间 - 务必确认</li>`);
+    
+    document.getElementById('riskWarnings').innerHTML = warnings.length > 0 
+        ? `<div class="warning-box"><h4>⚠️ 发现 ${warnings.length} 个问题：</h4><ul>${warnings.join('')}</ul></div>`
+        : '<div class="result-card" style="border-color:#22c55e"><h3 style="color:#22c55e">✅ 暂无发现明显问题</h3></div>';
+    
+    document.getElementById('analysisResult').classList.remove('hidden');
+}
+
+function generateChecklist(analysis) {
+    const questions = [
+        {text: "确认租金是否包含水电网费？", important: true},
+        {text: "押金是几个月？（通常1-2个月）", important: true},
+        {text: "租期最短多久？能否提前退租？", important: true},
+        {text: "确认是限女生入住吗？", important: true, warning: !analysis.femaleOnly},
+        {text: "房东是否同住？", important: true, warning: analysis.landlord === null},
+        {text: "室友都是女生吗？目前住了几个人？", important: true},
+        {text: "可以煮饭吗？有没有限制？", important: true, warning: analysis.cooking === null},
+        {text: "卫生间是独立的还是共用的？几个人共用？", important: true, warning: analysis.bathroom === null},
+        {text: "到NUS工学院具体多久？（请房东给出具体路线和时间）", important: true, warning: analysis.commute === null},
+        {text: "空调使用有限制吗？（有些房东限制使用时间）"},
+        {text: "洗衣机使用频率有限制吗？"},
+        {text: "可以带访客吗？有没有时间限制？"},
+        {text: "房间有窗户吗？采光如何？"},
+        {text: "周边治安如何？晚上安全吗？"},
+        {text: "附近有没有超市、食阁？"},
+        {text: "入住日期灵活吗？"},
+        {text: "能否视频看房或实地看房？", important: true},
+        {text: "签约前能否看房产证或租房合同模板？", important: true}
+    ];
+    
+    const html = questions.map((q, i) => `
+        <div class="checklist-item ${q.important ? 'important' : ''} ${q.warning ? 'warning' : ''}">
+            <input type="checkbox" id="q${i}">
+            <label for="q${i}">${q.important ? '🔴 ' : ''}${q.warning ? '⚠️ ' : ''}${q.text}</label>
+        </div>
+    `).join('');
+    
+    document.getElementById('questionChecklist').innerHTML = html;
+}
+
+function generateMessageTemplate(analysis) {
+    const template = `你好，我对这个房源很感兴趣，想咨询几个问题：
+
+1. 请问租金$${analysis.price || '___'}是否包含水电网费？押金是几个月？
+
+2. 请问是限女生入住吗？目前住了几位室友，都是女生吗？
+
+3. 请问房东是否同住？
+
+4. 请问可以煮饭吗？有没有限制？
+
+5. 请问卫生间是独立的还是共用的？
+
+6. 请问到NUS工学院（College of Design and Engineering）具体要多久？可以告诉我具体路线吗？
+
+7. 请问最短租期是多久？如果提前退租有什么规定？
+
+8. 请问可以视频看房或者实地看房吗？
+
+9. 请问入住日期是几号？
+
+期待你的回复，谢谢！`;
+
+    document.getElementById('messageTemplate').value = template;
+}
+
+function copyTemplate() {
+    const textarea = document.getElementById('messageTemplate');
+    textarea.select();
+    document.execCommand('copy');
+    alert('话术已复制到剪贴板！');
+}
+
+function clearAll() {
+    document.getElementById('listingInput').value = '';
+    document.getElementById('analysisResult').classList.add('hidden');
+}
+</script>
+</body>
+</html>

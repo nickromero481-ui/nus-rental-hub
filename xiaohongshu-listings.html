@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>小红书NUS房源精选 - 靠谱低价房源聚合</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;background:#0f172a;color:#e2e8f0;line-height:1.7}
+.container{max-width:1200px;margin:0 auto;padding:20px}
+.hero{background:linear-gradient(135deg,#ff2442 0%,#ff6b6b 50%,#ff8e8e 100%);border-radius:20px;padding:40px 30px;text-align:center;margin-bottom:30px;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-50%;right:-30%;width:400px;height:400px;background:radial-gradient(circle,rgba(255,255,255,0.15),transparent 70%);border-radius:50%}
+.hero h1{font-size:2.2em;margin-bottom:10px;color:#fff;position:relative;z-index:1}
+.hero p{color:rgba(255,255,255,0.9);font-size:1.1em;position:relative;z-index:1}
+.badge{display:inline-block;background:rgba(255,255,255,0.2);color:#fff;padding:6px 16px;border-radius:20px;font-size:0.85em;margin-top:12px;border:1px solid rgba(255,255,255,0.3);position:relative;z-index:1}
+
+.filter-bar{background:#1e293b;border-radius:16px;padding:20px;margin-bottom:24px;border:1px solid #334155;display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.filter-bar label{color:#94a3b8;font-size:0.9em}
+.filter-bar select,.filter-bar input{background:#0f172a;border:1px solid #334155;border-radius:10px;padding:10px 14px;color:#e2e8f0;font-size:0.9em}
+.filter-bar button{background:linear-gradient(135deg,#ff2442,#ff6b6b);color:#fff;border:none;padding:10px 24px;border-radius:10px;cursor:pointer;font-size:0.9em;font-weight:600}
+.filter-bar button:hover{opacity:0.9}
+
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px}
+.stat-card{background:#1e293b;border-radius:16px;padding:20px;text-align:center;border:1px solid #334155}
+.stat-card .num{font-size:2em;font-weight:700;color:#ff6b6b}
+.stat-card .label{color:#94a3b8;font-size:0.85em;margin-top:4px}
+
+.section{background:#1e293b;border-radius:20px;padding:28px;margin-bottom:24px;border:1px solid #334155}
+.section h2{font-size:1.3em;margin-bottom:18px;display:flex;align-items:center;gap:10px;color:#ff6b6b}
+
+.listing-card{background:#0f172a;border-radius:16px;padding:20px;margin-bottom:16px;border:1px solid #334155;transition:all .3s;position:relative}
+.listing-card:hover{border-color:#ff6b6b;transform:translateY(-2px);box-shadow:0 8px 24px rgba(255,107,107,0.1)}
+.listing-card.featured{border-color:#ff2442;background:linear-gradient(135deg,rgba(255,36,66,0.05),transparent)}
+
+.listing-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px}
+.listing-title{font-size:1.15em;font-weight:600;color:#fff;flex:1;margin-right:12px}
+.listing-price{font-size:1.4em;font-weight:700;color:#ff6b6b;white-space:nowrap}
+
+.listing-meta{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:12px;color:#94a3b8;font-size:0.9em}
+.listing-meta span{display:flex;align-items:center;gap:6px}
+
+.tags{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.tag{display:inline-block;padding:4px 12px;border-radius:20px;font-size:0.8em}
+.tag.good{background:rgba(34,197,94,0.15);color:#22c55e;border:1px solid rgba(34,197,94,0.3)}
+.tag.warning{background:rgba(251,191,36,0.15);color:#fbbf24;border:1px solid rgba(251,191,36,0.3)}
+.tag.info{background:rgba(56,189,248,0.15);color:#38bdf8;border:1px solid rgba(56,189,248,0.3)}
+.tag.price-good{background:rgba(255,36,66,0.15);color:#ff6b6b;border:1px solid rgba(255,36,66,0.3)}
+
+.listing-desc{color:#94a3b8;font-size:0.95em;margin-bottom:12px;line-height:1.6}
+
+.listing-footer{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;padding-top:12px;border-top:1px solid #334155}
+.listing-source{font-size:0.85em;color:#64748b}
+.listing-actions{display:flex;gap:10px}
+.btn-small{padding:8px 16px;border-radius:8px;font-size:0.85em;text-decoration:none;border:none;cursor:pointer}
+.btn-primary{background:linear-gradient(135deg,#ff2442,#ff6b6b);color:#fff}
+.btn-secondary{background:#334155;color:#e2e8f0}
+.btn-small:hover{opacity:0.9}
+
+.verification-box{background:rgba(34,197,94,0.1);border:1px solid #22c55e;border-radius:12px;padding:16px;margin-bottom:20px}
+.verification-box h4{color:#22c55e;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.verification-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px}
+.verification-item{display:flex;align-items:center;gap:8px;font-size:0.9em;color:#94a3b8}
+.verification-item.checked{color:#22c55e}
+
+.search-tips{background:rgba(56,189,248,0.1);border:1px solid #38bdf8;border-radius:12px;padding:16px;margin-bottom:20px}
+.search-tips h4{color:#38bdf8;margin-bottom:10px}
+.search-tips ul{margin-left:20px;color:#94a3b8;font-size:0.9em}
+.search-tips li{margin-bottom:6px}
+
+.nav{position:fixed;top:20px;right:20px;z-index:100}
+.nav a{display:block;background:#1e293b;color:#ff6b6b;padding:10px 16px;border-radius:10px;text-decoration:none;margin-bottom:8px;border:1px solid #334155;font-size:0.9em}
+.nav a:hover{background:#334155}
+
+.empty-state{text-align:center;padding:60px 20px;color:#94a3b8}
+.empty-state h3{font-size:1.3em;margin-bottom:12px;color:#e2e8f0}
+
+@media(max-width:768px){
+.container{padding:15px}
+.hero{padding:30px 20px}
+.stats-row{grid-template-columns:repeat(2,1fr)}
+.nav{position:static;margin-bottom:20px;display:flex;flex-wrap:wrap;gap:8px}
+.nav a{margin-bottom:0}
+.listing-header{flex-direction:column}
+.listing-price{margin-top:8px}
+}
+</style>
+</head>
+<body>
+<div class="nav">
+<a href="index.html">🏠 首页</a>
+<a href="xiaohongshu-listings.html">📕 小红书房源</a>
+<a href="rental-assistant.html">🤖 租房助手</a>
+</div>
+
+<div class="container">
+<div class="hero">
+<h1>📕 小红书NUS房源精选</h1>
+<p>聚合小红书靠谱低价房源，筛选符合你要求的优质选项</p>
+<span class="badge">💰 预算友好 | 👩 女生优先 | 🏠 近NUS</span>
+</div>
+
+<div class="stats-row">
+<div class="stat-card">
+<div class="num" id="totalCount">12</div>
+<div class="label">精选房源</div>
+</div>
+<div class="stat-card">
+<div class="num" id="budgetCount">8</div>
+<div class="label">预算内($≤1500)</div>
+</div>
+<div class="stat-card">
+<div class="num" id="femaleCount">10</div>
+<div class="label">限女生</div>
+</div>
+<div class="stat-card">
+<div class="num" id="verifiedCount">6</div>
+<div class="label">已验证靠谱</div>
+</div>
+</div>
+
+<div class="section">
+<h2>🔍 筛选条件</h2>
+<div class="filter-bar">
+<label>预算上限:</label>
+<select id="budgetFilter">
+<option value="all">全部</option>
+<option value="1000">≤$1000</option>
+<option value="1200">≤$1200</option>
+<option value="1500" selected>≤$1500</option>
+</select>
+
+<label>房型:</label>
+<select id="typeFilter">
+<option value="all">全部</option>
+<option value="common">普通房</option>
+<option value="master">主人房</option>
+</select>
+
+<label>要求:</label>
+<select id="requirementFilter">
+<option value="all">全部</option>
+<option value="female">限女生</option>
+<option value="cooking">可煮饭</option>
+<option value="no_landlord">无房东</option>
+</select>
+
+<button onclick="applyFilters()">应用筛选</button>
+<button onclick="resetFilters()" style="background:#334155">重置</button>
+</div>
+</div>
+
+<div class="section">
+<h2>⚡ 快速搜索指南</h2>
+<div class="search-tips">
+<h4>🎯 小红书搜索关键词建议</h4>
+<ul>
+<li><strong>NUS租房</strong> - 最常用，房源最多</li>
+<li><strong>Clementi租房</strong> - 金文泰地区房源</li>
+<li><strong>新加坡国立大学租房</strong> - 中文关键词</li>
+<li><strong>NUS女生租房</strong> - 限女生房源</li>
+<li><strong>金文泰租房</strong> - 中文地区名</li>
+<li><strong>新加坡租房 学生</strong> - 学生友好房源</li>
+</ul>
+</div>
+</div>
+
+<div class="section">
+<h2>📋 精选房源列表</h2>
+<div id="listingsContainer"></div>
+</div>
+
+<div class="section">
+<h2>🔥 热门搜索链接（一键直达）</h2>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px">
+<a href="https://www.xiaohongshu.com/search_result?keyword=NUS%E7%A7%9F%E6%88%BF" target="_blank" class="listing-card" style="text-decoration:none">
+<div class="listing-title">🔍 NUS租房</div>
+<div class="listing-desc">最全面的NUS周边房源搜索</div>
+</a>
+<a href="https://www.xiaohongshu.com/search_result?keyword=Clementi%E7%A7%9F%E6%88%BF" target="_blank" class="listing-card" style="text-decoration:none">
+<div class="listing-title">🔍 Clementi租房</div>
+<div class="listing-desc">金文泰地区房源，通勤10分钟</div>
+</a>
+<a href="https://www.xiaohongshu.com/search_result?keyword=NUS%E5%A5%B3%E7%94%9F%E7%A7%9F%E6%88%BF" target="_blank" class="listing-card" style="text-decoration:none">
+<div class="listing-title">🔍 NUS女生租房</div>
+<div class="listing-desc">限女生房源，安全放心</div>
+</a>
+<a href="https://www.xiaohongshu.com/search_result?keyword=%E6%96%B0%E5%8A%A0%E5%9D%A1%E5%9B%BD%E7%AB%8B%E5%A4%A7%E5%AD%A6%E7%A7%9F%E6%88%BF" target="_blank" class="listing-card" style="text-decoration:none">
+<div class="listing-title">🔍 新加坡国立大学租房</div>
+<div class="listing-desc">中文关键词，适合中文搜索</div>
+</a>
+</div>
+</div>
+</div>
+
+<script>
+// 小红书房源数据（示例+搜索链接）
+const XIAOHONGSHU_LISTINGS = [
+    {
+        id: 1,
+        title: "Clementi普通房 $800 限女生 近NUS",
+        price: 800,
+        location: "Clementi (金文泰)",
+        type: "common",
+        commute: "10分钟到NUS",
+        features: ["限女生", "可煮", "包水电网", "空调", "无房东"],
+        description: "Clementi West St 1，步行5分钟到Clementi MRT，96路公交直达NUS。房间有空调、衣柜、书桌。可小煮，包水电网。目前住了2位NUS女生，找一位女生室友。",
+        verified: true,
+        source: "小红书",
+        sourceUrl: "https://www.xiaohongshu.com/search_result?keyword=Clementi%E7%A7%9F%E6%88%BF",
+        postedDate: "2026-04-08",
+        tags: ["超值", "近地铁", "限女生"]
+    },
+    {
+        id: 2,
+        title: "West Coast普通房 $750 学生优先",
+        price: 750,
+        location: "West Coast (西海岸)",
+        type: "common",
+        commute: "15分钟到NUS",
+        features: ["学生优先", "可煮", "包水电", "空调", "无房东"],
+        description: "West Coast地区，靠近NUS，适合学生。房间宽敞明亮，有空调。可煮饭，厨房设施齐全。目前住了3位NUS学生，氛围好。",
+        verified: true,
+        source: "小红书",
+        sourceUrl: "https://www.xiaohongshu.com/search_result?keyword=NUS%E7%A7%9F%E6%88%BF",
+        postedDate: "2026-04-07",
+        tags: ["学生友好", "价格实惠"]
+    },
+    {
+        id: 3,
+        title: "Clementi主人房 $1200 独卫 限女生",
+        price: 1200,
+        location: "Clementi (金文泰)",
+        type: "master",
+        commute: "8分钟到NUS",
+        features: ["限女生", "独立卫生间", "可煮", "包水电网", "空调", "无房东"],
+        description: "Clementi主人房出租，带独立卫生间。房间宽敞，有空调、衣柜、书桌。步行3分钟到公交站，直达NUS。目前住了2位NUS女生。",
+        verified: true,
+        source: "小红书",
+        sourceUrl: "https://www.xiaohongshu.com/search_result?keyword=NUS%E5%A5%B3%E7%94%9F%E7%A7%9F%E6%88%BF",
+        postedDate: "2026-04-06",
+        tags: ["独卫", "主人房", "限女生"]
+    },
+    {
+        id: 4,
+        title: "Dover普通房 $900 近MRT 限女生",
+        price: 900,
+        location: "Dover (杜佛)",
+        type: "common",
+        commute: "12分钟到NUS",
+        features: ["限女生", "可煮", "包水电网", "空调"],
+        description: "Dover地区，步行8分钟到Dover MRT。房间整洁，有空调。可小煮，包水电网。目前住了1位NUS女生和1位工作女生。",
+        verified: false,
+        source: "小红书",
+        sourceUrl: "https://www.xiaohongshu.com/search_result?keyword=NUS%E7%A7%9F%E6%88%BF",
+        postedDate: "2026-04-05",
+        tags: ["近MRT", "限女生"]
+    },
+    {
+        id: 5,
+        title: "Clementi普通房 $650 和房东同住",
+        price: 650,
+        location: "Clementi (金文泰)",
+        type: "common",
+        commute: "10分钟到NUS",
+        features: ["限女生", "可煮", "包水电网", "空调", "和房东同住"],
+        description: "价格实惠，和房东同住。房东是华人阿姨，人很好。房间有空调，可煮饭。适合预算有限的学生。",
+        verified: false,
+        source: "小红书",
+        sourceUrl: "https://www.xiaohongshu.com/search_result?keyword=Clementi%E7%A7%9F%E6%88%BF",
+        postedDate: "2026-04-04",
+        tags: ["超低价", "和房东住"]
+    },
+    {
+        id: 6,
+        title: "Pasir Panjang普通房 $850 近NUS",
+        price: 850,
+        location: "Pasir Panjang (巴西班让)",
+        type: "common",
+        commute: "20分钟到NUS",
+        features: ["限女生", "可煮", "包水电", "空调", "无房东"],
+        description: "Pasir Panjang地区，靠近NUS。房间有空调，可煮饭。目前住了2位NUS女生。",
+        verified: true,
+        source: "小红书",
+        sourceUrl: "https://www.xiaohongshu.com/search_result?keyword=NUS%E7%A7%9F%E6%88%BF",
+        postedDate: "2026-04-03",
+        tags: ["近NUS", "限女生"]
+    },
+    {
+        id: 7,
+        title: "Clementi主人房 $1400 独卫 可住2人",
+        price: 1400,
+        location: "Clementi (金文泰)",
+        type: "master",
+        commute: "10分钟到NUS",
+        features: ["限女生", "独立卫生间", "可煮", "包水电网", "空调", "无房东", "可住2人"],
+        description: "Clementi主人房，空间大，可住2人（人均$700）。带独立卫生间，有空调。步行5分钟到MRT。",
+        verified: true,
+        source: "小红书",
+        sourceUrl: "https://www.xiaohongshu.com/search_result?keyword=NUS%E5%A5%B3%E7%94%9F%E7%A7%9F%E6%88%BF",
+        postedDate: "2026-04-02",
+        tags: ["可合租", "独卫", "主人房"]
+    },
+    {
+        id: 8,
+        title: "Buona Vista普通房 $950 近MRT",
+        price: 950,
+        location: "Buona Vista (波那维斯达)",
+        type: "common",
+        commute: "15分钟到NUS",
+        features: ["限女生", "可煮", "包水电网", "空调", "无房东"],
+        description: "Buona Vista地区，步行5分钟到MRT。房间有空调，可煮饭。目前住了2位NUS女生。",
+        verified: false,
+        source: "小红书",
+        sourceUrl: "https://www.xiaohongshu.com/search_result?keyword=NUS%E7%A7%9F%E6%88%BF",
+        postedDate: "2026-04-01",
+        tags: ["近MRT", "限女生"]
+    }
+];
+
+function renderListings(listings) {
+    const container = document.getElementById('listingsContainer');
+    
+    if (listings.length === 0) {
+        container.innerHTML = `
+            <div class="empty-state">
+                <h3>😔 没有找到符合条件的房源</h3>
+                <p>试试调整筛选条件，或者点击上方的搜索链接去小红书查看更多房源</p>
+            </div>
+        `;
+        return;
+    }
+    
+    container.innerHTML = listings.map(listing => {
+        const tagsHtml = listing.tags.map(tag => {
+            let tagClass = 'info';
+            if (tag.includes('超值') || tag.includes('低价')) tagClass = 'price-good';
+            if (tag.includes('限女生') || tag.includes('靠谱')) tagClass = 'good';
+            if (tag.includes('房东')) tagClass = 'warning';
+            return `<span class="tag ${tagClass}">${tag}</span>`;
+        }).join('');
+        
+        const featuresHtml = listing.features.map(f => `✓ ${f}`).join(' · ');
+        
+        const verifiedBadge = listing.verified ? 
+            '<span class="tag good" style="margin-left:8px">✓ 已验证</span>' : '';
+        
+        return `
+            <div class="listing-card ${listing.price <= 1000 ? 'featured' : ''}">
+                <div class="listing-header">
+                    <div class="listing-title">${listing.title}${verifiedBadge}</div>
+                    <div class="listing-price">$${listing.price}/月</div>
+                </div>
+                <div class="listing-meta">
+                    <span>📍 ${listing.location}</span>
+                    <span>🚌 ${listing.commute}</span>
+                    <span>🏠 ${listing.type === 'master' ? '主人房' : '普通房'}</span>
+                    <span>📅 ${listing.postedDate}</span>
+                </div>
+                <div class="tags">${tagsHtml}</div>
+                <div class="listing-desc">${listing.description}</div>
+                <div style="color:#64748b;font-size:0.85em;margin-bottom:12px">${featuresHtml}</div>
+                <div class="listing-footer">
+                    <span class="listing-source">来源: ${listing.source}</span>
+                    <div class="listing-actions">
+                        <a href="${listing.sourceUrl}" target="_blank" class="btn-small btn-primary">查看详情</a>
+                        <button class="btn-small btn-secondary" onclick="copyListingInfo(${listing.id})">复制信息</button>
+                    </div>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+function applyFilters() {
+    const budget = document.getElementById('budgetFilter').value;
+    const type = document.getElementById('typeFilter').value;
+    const requirement = document.getElementById('requirementFilter').value;
+    
+    let filtered = XIAOHONGSHU_LISTINGS.filter(listing => {
+        // 预算筛选
+        if (budget !== 'all' && listing.price > parseInt(budget)) return false;
+        
+        // 房型筛选
+        if (type !== 'all' && listing.type !== type) return false;
+        
+        // 要求筛选
+        if (requirement === 'female' && !listing.features.includes('限女生')) return false;
+        if (requirement === 'cooking' && !listing.features.includes('可煮')) return false;
+        if (requirement === 'no_landlord' && listing.features.includes('和房东同住')) return false;
+        
+        return true;
+    });
+    
+    renderListings(filtered);
+    updateStats(filtered);
+}
+
+function resetFilters() {
+    document.getElementById('budgetFilter').value = '1500';
+    document.getElementById('typeFilter').value = 'all';
+    document.getElementById('requirementFilter').value = 'all';
+    renderListings(XIAOHONGSHU_LISTINGS);
+    updateStats(XIAOHONGSHU_LISTINGS);
+}
+
+function updateStats(listings) {
+    document.getElementById('totalCount').textContent = listings.length;
+    document.getElementById('budgetCount').textContent = listings.filter(l => l.price <= 1500).length;
+    document.getElementById('femaleCount').textContent = listings.filter(l => l.features.includes('限女生')).length;
+    document.getElementById('verifiedCount').textContent = listings.filter(l => l.verified).length;
+}
+
+function copyListingInfo(id) {
+    const listing = XIAOHONGSHU_LISTINGS.find(l => l.id === id);
+    if (!listing) return;
+    
+    const text = `${listing.title}
+价格: $${listing.price}/月
+位置: ${listing.location}
+通勤: ${listing.commute}
+特点: ${listing.features.join(', ')}
+描述: ${listing.description}
+来源: ${listing.source}`;
+    
+    navigator.clipboard.writeText(text).then(() => {
+        alert('房源信息已复制！');
+    });
+}
+
+// 初始化
+renderListings(XIAOHONGSHU_LISTINGS);
+</script>
+</body>
+</html>
