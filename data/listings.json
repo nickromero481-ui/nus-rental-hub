@@ -1,46 +1,13 @@
 {
-  "last_updated": "2026-04-16T15:19:59.916397",
-  "total_listings": 5,
+  "last_updated": "2026-04-17T04:43:41.948526",
+  "total_listings": 1,
   "listings": [
     {
-      "platform": "狮城论坛",
-      "title": "Clementi 普通房出租 - 近NUS",
-      "price": "$850/month",
-      "url": "https://shicheng.one",
-      "scraped_at": "2026-04-16T15:19:59.916386",
-      "note": "请手动搜索 'Clementi NUS' 查看最新房源"
-    },
-    {
       "platform": "iLiveSG",
-      "title": "Clementi Room for Rent - Near MRT",
-      "price": "$900/month",
-      "url": "https://ilivesg.com/rental?location=clementi",
-      "scraped_at": "2026-04-16T15:19:59.916391",
-      "note": "筛选条件: Clementi, $500-$1500"
-    },
-    {
-      "platform": "Roomgo",
-      "title": "Room in Clementi - Female Preferred",
-      "price": "$800/month",
-      "url": "https://www.roomgo.com.sg/singapore--room-for-rent-in-clementi",
-      "scraped_at": "2026-04-16T15:19:59.916393",
-      "note": "可筛选 'Female only' 选项"
-    },
-    {
-      "platform": "ShweRooms",
-      "title": "Clementi Common Room - Near NUS",
-      "price": "$750/month",
-      "url": "https://shwerooms.com/search?location=clementi&type=room",
-      "scraped_at": "2026-04-16T15:19:59.916394",
-      "note": "支持地图搜索模式"
-    },
-    {
-      "platform": "小红书",
-      "title": "NUS女生租房合集",
-      "price": "$800-1200/month",
-      "url": "https://www.xiaohongshu.com/search_result?keyword=NUS%E7%A7%9F%E6%88%BF",
-      "scraped_at": "2026-04-16T15:19:59.916395",
-      "note": "搜索关键词: NUS租房, Clementi租房, 新加坡国立大学租房"
+      "title": "Room for rent nearby MRT, 100% No Agent Fee!",
+      "price": "Price on request",
+      "url": "https://ilivesg.com/singapore-room-for-rent?mrt_r2%5Borigin%5D=1.316443%2C103.882982&sorting=created-DESC",
+      "scraped_at": "2026-04-17T04:43:37.003078"
     }
   ]
 }
